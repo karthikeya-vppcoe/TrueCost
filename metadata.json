@@ -1,0 +1,5 @@
+{
+  "name": "Copy of TrueCost Admin Dashboard",
+  "description": "An admin dashboard for monitoring lookup success rates, errors, top queried items, and partner API health for the TrueCost service. It also includes tools for manual product mapping and privacy controls.",
+  "requestFramePermissions": []
+}
