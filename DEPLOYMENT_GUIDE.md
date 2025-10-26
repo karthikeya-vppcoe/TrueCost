@@ -73,6 +73,8 @@ The `vercel.json` file is pre-configured with:
 - Security headers (XSS protection, frame options, etc.)
 - SPA routing (rewrites all routes to index.html)
 
+> **Note**: Environment variables like `GEMINI_API_KEY` should be configured through Vercel's dashboard during project setup (Step 5 above), not in `vercel.json`.
+
 ## Deploy to Render
 
 ### Static Site Deployment
