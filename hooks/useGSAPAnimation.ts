@@ -8,7 +8,7 @@ import { gsap } from 'gsap';
  */
 export const useGSAPAnimation = (
     animationConfig: gsap.TweenVars,
-    dependencies: any[] = []
+    dependencies: React.DependencyList = []
 ) => {
     const elementRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +38,7 @@ export const useGSAPAnimation = (
 export const useGSAPStagger = (
     selector: string,
     animationConfig: gsap.TweenVars,
-    dependencies: any[] = []
+    dependencies: React.DependencyList = []
 ) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
