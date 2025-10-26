@@ -1,7 +1,7 @@
 // types.ts
 
 export type AdminView = 'dashboard' | 'mapping' | 'settings';
-export type UserView = 'dashboard' | 'profile' | 'subscriptions' | 'priceComparison';
+export type UserView = 'dashboard' | 'profile' | 'subscriptions' | 'priceComparison' | 'analytics';
 
 export type Theme = 'light' | 'dark';
 
@@ -126,3 +126,53 @@ export interface PriceComparisonItem {
 export type ValidationErrors<T> = {
   [K in keyof T]?: string;
 };
+
+// Analytics types
+export interface SpendingTrend {
+  month: string;
+  spending: number;
+  savings: number;
+  transactions: number;
+}
+
+export interface CategorySpending {
+  category: string;
+  amount: number;
+  percentage: number;
+  trend: 'up' | 'down' | 'stable';
+  color: string;
+}
+
+export interface MonthlyComparison {
+  currentMonth: {
+    spending: number;
+    savings: number;
+    transactions: number;
+  };
+  previousMonth: {
+    spending: number;
+    savings: number;
+    transactions: number;
+  };
+  percentageChange: {
+    spending: number;
+    savings: number;
+    transactions: number;
+  };
+}
+
+export interface AnalyticsInsight {
+  id: string;
+  type: 'tip' | 'warning' | 'success' | 'prediction';
+  title: string;
+  description: string;
+  impact: 'high' | 'medium' | 'low';
+  icon: string;
+}
+
+export interface PredictiveAnalytics {
+  nextMonthSpending: number;
+  confidence: number;
+  factors: string[];
+  recommendation: string;
+}

@@ -122,3 +122,122 @@ export const fetchSubscriptions = async (): Promise<Subscription[]> => {
         { id: 'sub-5', name: 'Gym Membership', amount: 45.50, cycle: 'monthly', nextPaymentDate: new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString() },
     ];
 };
+
+// Analytics API functions
+export const fetchSpendingTrends = async (): Promise<import('../types.ts').SpendingTrend[]> => {
+    await delay(800);
+    const trends = [];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const currentMonth = new Date().getMonth();
+    
+    for (let i = 5; i >= 0; i--) {
+        const monthIndex = (currentMonth - i + 12) % 12;
+        const baseSpending = 300 + Math.random() * 200;
+        const baseSavings = baseSpending * (0.1 + Math.random() * 0.1);
+        
+        trends.push({
+            month: months[monthIndex],
+            spending: parseFloat(baseSpending.toFixed(2)),
+            savings: parseFloat(baseSavings.toFixed(2)),
+            transactions: Math.floor(10 + Math.random() * 10),
+        });
+    }
+    return trends;
+};
+
+export const fetchCategorySpending = async (): Promise<import('../types.ts').CategorySpending[]> => {
+    await delay(600);
+    const categories = [
+        { category: 'Groceries', amount: 245.30, color: '#10B981', trend: 'stable' as const },
+        { category: 'Electronics', amount: 185.50, color: '#3B82F6', trend: 'down' as const },
+        { category: 'Dining Out', amount: 156.75, color: '#F59E0B', trend: 'up' as const },
+        { category: 'Household', amount: 124.65, color: '#8B5CF6', trend: 'stable' as const },
+        { category: 'Entertainment', amount: 89.99, color: '#EC4899', trend: 'up' as const },
+        { category: 'Healthcare', amount: 78.45, color: '#06B6D4', trend: 'down' as const },
+        { category: 'Transportation', amount: 67.80, color: '#F97316', trend: 'stable' as const },
+        { category: 'Personal Care', amount: 45.20, color: '#84CC16', trend: 'down' as const },
+    ];
+    
+    const total = categories.reduce((sum, cat) => sum + cat.amount, 0);
+    return categories.map(cat => ({
+        ...cat,
+        percentage: parseFloat(((cat.amount / total) * 100).toFixed(1)),
+    }));
+};
+
+export const fetchMonthlyComparison = async (): Promise<import('../types.ts').MonthlyComparison> => {
+    await delay(500);
+    const current = {
+        spending: 993.64,
+        savings: 142.75,
+        transactions: 15,
+    };
+    const previous = {
+        spending: 1087.32,
+        savings: 128.45,
+        transactions: 18,
+    };
+    
+    return {
+        currentMonth: current,
+        previousMonth: previous,
+        percentageChange: {
+            spending: parseFloat((((current.spending - previous.spending) / previous.spending) * 100).toFixed(1)),
+            savings: parseFloat((((current.savings - previous.savings) / previous.savings) * 100).toFixed(1)),
+            transactions: parseFloat((((current.transactions - previous.transactions) / previous.transactions) * 100).toFixed(1)),
+        },
+    };
+};
+
+export const fetchAnalyticsInsights = async (): Promise<import('../types.ts').AnalyticsInsight[]> => {
+    await delay(900);
+    return [
+        {
+            id: '1',
+            type: 'success',
+            title: 'Great Savings Performance',
+            description: 'You saved 14% more this month compared to last month. Keep up the excellent work!',
+            impact: 'high',
+            icon: '🎉',
+        },
+        {
+            id: '2',
+            type: 'warning',
+            title: 'Dining Out Spending Increased',
+            description: 'Your dining out expenses are up 23% this month. Consider meal planning to reduce costs.',
+            impact: 'medium',
+            icon: '🍽️',
+        },
+        {
+            id: '3',
+            type: 'tip',
+            title: 'Bulk Purchase Opportunity',
+            description: 'Based on your grocery patterns, buying in bulk could save you $25-30 monthly.',
+            impact: 'medium',
+            icon: '💡',
+        },
+        {
+            id: '4',
+            type: 'prediction',
+            title: 'Next Month Forecast',
+            description: 'Your predicted spending for next month is $950-1050 based on current trends.',
+            impact: 'low',
+            icon: '📈',
+        },
+    ];
+};
+
+export const fetchPredictiveAnalytics = async (): Promise<import('../types.ts').PredictiveAnalytics> => {
+    await delay(1000);
+    return {
+        nextMonthSpending: 1024.50,
+        confidence: 87,
+        factors: [
+            'Historical spending patterns',
+            'Seasonal trends',
+            'Upcoming subscription renewals',
+            'Current budget utilization',
+        ],
+        recommendation: 'Based on your spending patterns, we recommend setting aside $1,100 for next month to maintain your savings goals while accommodating typical expenses.',
+    };
+};
