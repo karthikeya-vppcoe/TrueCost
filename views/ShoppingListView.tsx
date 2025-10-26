@@ -3,6 +3,7 @@ import { ShoppingListItem, PriceAlertNotification } from '../types.ts';
 import { fetchShoppingList, fetchPriceAlerts } from '../services/api.ts';
 import { formatCurrency, formatDate } from '../utils/formatters.ts';
 import { useNotification } from '../context/NotificationContext.tsx';
+import { useGSAPStagger } from '../hooks/useGSAPAnimation.ts';
 import SkeletonLoader from '../components/SkeletonLoader.tsx';
 import EmptyState from '../components/EmptyState.tsx';
 import { 
@@ -73,6 +74,12 @@ const ShoppingListView: React.FC<ShoppingListViewProps> = ({ onBack }) => {
     const filteredItems = filter === 'all' 
         ? items 
         : items.filter(item => item.priority === filter);
+    
+    // GSAP animation for staggered item entrance
+    const itemsContainerRef = useGSAPStagger('.shopping-item', { 
+        opacity: 0, 
+        y: 30 
+    }, [filteredItems.length]);
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {
@@ -262,11 +269,11 @@ const ShoppingListView: React.FC<ShoppingListViewProps> = ({ onBack }) => {
                         onAction={() => setShowAddModal(true)}
                     />
                 ) : (
-                    <div className="grid grid-cols-1 gap-6">
+                    <div ref={itemsContainerRef} className="grid grid-cols-1 gap-6">
                         {filteredItems.map((item) => (
                             <div
                                 key={item.id}
-                                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] animate-fade-in"
+                                className="shopping-item bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
                             >
                                 <div className="flex flex-col lg:flex-row gap-6">
                                     {/* Item Info */}
