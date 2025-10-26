@@ -6,6 +6,9 @@ import DataTable from '../components/DataTable.tsx';
 import UserSavingsChart from '../components/UserSavingsChart.tsx';
 import SavingsGoal from '../components/SavingsGoal.tsx';
 import BudgetInsights from '../components/BudgetInsights.tsx';
+import RewardsAchievements from '../components/RewardsAchievements.tsx';
+import SavingsMilestones from '../components/SavingsMilestones.tsx';
+import StatCard3D from '../components/StatCard3D.tsx';
 import { PiggyBankIcon, WarningIcon, ReceiptIcon, ChartBarIcon } from '../components/Icons.tsx';
 import { formatCurrency, formatDate } from '../utils/formatters.ts';
 import SkeletonLoader from '../components/SkeletonLoader.tsx';
@@ -124,11 +127,11 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                     <div className="mb-4 sm:mb-6">
                         <button 
                             onClick={() => onNavigate('priceComparison')}
-                            className="w-full bg-gradient-to-r from-brand-secondary to-green-600 hover:from-green-600 hover:to-brand-secondary text-white p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                            className="w-full bg-gradient-to-r from-brand-secondary to-green-600 hover:from-green-600 hover:to-brand-secondary text-white p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]"
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-4">
-                                    <div className="bg-white/20 p-3 rounded-lg">
+                                    <div className="bg-white/20 p-3 rounded-lg animate-pulse-slow">
                                         <ChartBarIcon className="w-8 h-8" />
                                     </div>
                                     <div className="text-left">
@@ -136,11 +139,29 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                                         <p className="text-sm sm:text-base text-white/90">Compare prices across retailers and find the best deals</p>
                                     </div>
                                 </div>
-                                <svg className="w-6 h-6 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-6 h-6 hidden sm:block transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                 </svg>
                             </div>
                         </button>
+                    </div>
+
+                    {/* New Features Section - Rewards & Milestones */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                        {isLoading ? (
+                            <>
+                                <SkeletonLoader className="h-96 w-full rounded-xl" />
+                                <SkeletonLoader className="h-96 w-full rounded-xl" />
+                            </>
+                        ) : (
+                            <>
+                                <SavingsMilestones currentSavings={savings?.totalSavings || 0} />
+                                <RewardsAchievements 
+                                    totalSavings={savings?.totalSavings || 0}
+                                    checkoutCount={activity.length}
+                                />
+                            </>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 mb-4 sm:mb-6">
