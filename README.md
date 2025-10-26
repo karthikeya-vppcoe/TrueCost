@@ -163,10 +163,14 @@ TrueCost/
 
 ### User Features
 - **Savings Dashboard**: Track total and average savings
+- **Advanced Analytics**: Deep insights with AI-powered predictions and spending trends
 - **Shopping History**: View past transactions with detailed breakdowns
+- **Price Comparison**: Compare prices across multiple retailers
 - **Subscriptions**: Manage active subscriptions
 - **Profile Management**: Update user information
 - **Savings Goals**: Set and track financial goals
+- **Achievements & Rewards**: Unlock milestones and earn points
+- **Budget Insights**: AI-powered spending analysis and recommendations
 
 ## Contributing
 

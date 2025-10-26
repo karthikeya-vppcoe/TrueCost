@@ -11,6 +11,7 @@ import UserDashboardView from './views/UserDashboardView.tsx';
 import UserProfileView from './views/UserProfileView.tsx';
 import SubscriptionsView from './views/SubscriptionsView.tsx';
 import PriceComparisonView from './views/PriceComparisonView.tsx';
+import AnalyticsView from './views/AnalyticsView.tsx';
 import UserHeader from './components/UserHeader.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { NotificationProvider } from './context/NotificationContext.tsx';
@@ -93,6 +94,8 @@ const App: React.FC = () => {
                 return <SubscriptionsView onBack={() => setCurrentUserView('dashboard')} />;
             case 'priceComparison':
                 return <PriceComparisonView onBack={() => setCurrentUserView('dashboard')} />;
+            case 'analytics':
+                return <AnalyticsView onBack={() => setCurrentUserView('dashboard')} />;
             default:
                  return <UserDashboardView user={user} onNavigate={(view) => setCurrentUserView(view)} />;
         }
