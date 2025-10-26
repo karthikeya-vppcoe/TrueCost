@@ -40,21 +40,21 @@ const SubscriptionsView: React.FC<SubscriptionsViewProps> = ({ onBack }) => {
     ];
 
     return (
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 animate-fade-in">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 animate-fade-in overflow-y-auto">
             <div className="max-w-5xl mx-auto">
-                <button onClick={onBack} className="mb-6 text-sm text-brand-primary hover:underline">
+                <button onClick={onBack} className="mb-4 sm:mb-6 text-sm text-brand-primary hover:underline flex items-center">
                     &larr; Back to Dashboard
                 </button>
-                <div className="flex flex-col md:flex-row justify-between md:items-center mb-6">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Subscription Tracker</h1>
-                    <div className="mt-4 md:mt-0 text-center md:text-right bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-4 sm:mb-6">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Subscription Tracker</h1>
+                    <div className="text-center md:text-right bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
                         <p className="text-sm text-gray-500 dark:text-gray-400">Total Monthly Recurring</p>
-                        <p className="text-2xl font-bold text-brand-primary">{formatCurrency(totalMonthlyCost)}</p>
+                        <p className="text-xl sm:text-2xl font-bold text-brand-primary">{formatCurrency(totalMonthlyCost)}</p>
                     </div>
                 </div>
 
                 {isLoading ? (
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md">
                         <SkeletonLoader className="h-8 w-1/3 mb-4" />
                         <SkeletonLoader className="h-64 w-full" />
                     </div>

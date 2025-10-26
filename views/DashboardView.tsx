@@ -58,8 +58,8 @@ const DashboardView: React.FC = () => {
     ];
 
     return (
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 animate-fade-in overflow-y-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6">
                 <DashboardCard 
                     title="Items to Map" 
                     value={mappingItems.length} 
@@ -91,7 +91,7 @@ const DashboardView: React.FC = () => {
                 />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
                 <div className="lg:col-span-2">
                     <LineChartComponent data={lookupData} />
                 </div>
@@ -100,7 +100,7 @@ const DashboardView: React.FC = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                  <div className="lg:col-span-2">
                     <DataTable title="Manual Mapping Queue" columns={mappingColumns} data={mappingItems.slice(0, 5)} />
                 </div>
