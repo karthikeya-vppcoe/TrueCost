@@ -35,20 +35,27 @@ const DashboardCard: React.FC<DashboardCardProps> = ({ title, value, icon, isLoa
                             {suffix}
                         </p>
                     </div>
-                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg ${colorClass} transform transition-transform duration-300 ${isClickable ? 'group-hover:scale-110 group-hover:rotate-3' : ''}`}>
+                    <div className={`relative w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg ${colorClass} transform transition-all duration-300 ${isClickable ? 'group-hover:scale-110 group-hover:rotate-6' : ''}`}>
                         {icon}
+                        {/* Animated background circles */}
+                        <div className="absolute inset-0 rounded-xl overflow-hidden opacity-30">
+                            <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full animate-pulse-slow" />
+                            <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-white rounded-full animate-float" />
+                        </div>
                     </div>
                 </>
             )}
         </>
     );
     
-    const baseClasses = "bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-between animate-fade-in";
-    const interactiveClasses = "transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-brand-primary dark:hover:border-brand-primary cursor-pointer group";
+    const baseClasses = "relative bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-between animate-fade-in overflow-hidden";
+    const interactiveClasses = "transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:border-brand-primary dark:hover:border-brand-primary cursor-pointer group";
 
     if (isClickable) {
         return (
             <button onClick={onClick} className={`${baseClasses} ${interactiveClasses} text-left w-full`}>
+                {/* Shine effect on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 {cardContent}
             </button>
         );

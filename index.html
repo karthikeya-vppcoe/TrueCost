@@ -47,6 +47,15 @@
             'fade-in-right': 'fadeInRight 0.3s ease-out forwards',
             'slide-in-up': 'slideInUp 0.5s ease-out forwards',
             'shimmer': 'shimmer 1.5s infinite linear',
+            'bounce-slow': 'bounceSlow 2s infinite ease-in-out',
+            'pulse-slow': 'pulseSlow 3s infinite ease-in-out',
+            'float': 'float 3s infinite ease-in-out',
+            'confetti': 'confetti 3s ease-out forwards',
+            'glow': 'glow 2s infinite alternate',
+            'wiggle': 'wiggle 1s ease-in-out infinite',
+            'scale-in': 'scaleIn 0.3s ease-out forwards',
+            'slide-in-left': 'slideInLeft 0.5s ease-out forwards',
+            'rotate-slow': 'rotateSlow 20s linear infinite',
           },
           keyframes: {
             fadeIn: {
@@ -61,9 +70,45 @@
               '0%': { opacity: 0, transform: 'translateY(20px)' },
               '100%': { opacity: 1, transform: 'translateY(0)' },
             },
+            slideInLeft: {
+              '0%': { opacity: 0, transform: 'translateX(-20px)' },
+              '100%': { opacity: 1, transform: 'translateX(0)' },
+            },
             shimmer: {
               '0%': { backgroundPosition: '-1000px 0' },
               '100%': { backgroundPosition: '1000px 0' },
+            },
+            bounceSlow: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            pulseSlow: {
+              '0%, 100%': { opacity: 1 },
+              '50%': { opacity: 0.7 },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-15px)' },
+            },
+            confetti: {
+              '0%': { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+              '100%': { transform: 'translateY(100vh) rotate(720deg)', opacity: 0 },
+            },
+            glow: {
+              '0%': { boxShadow: '0 0 5px rgba(79, 70, 229, 0.5)' },
+              '100%': { boxShadow: '0 0 20px rgba(79, 70, 229, 0.8)' },
+            },
+            wiggle: {
+              '0%, 100%': { transform: 'rotate(-3deg)' },
+              '50%': { transform: 'rotate(3deg)' },
+            },
+            scaleIn: {
+              '0%': { transform: 'scale(0.9)', opacity: 0 },
+              '100%': { transform: 'scale(1)', opacity: 1 },
+            },
+            rotateSlow: {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' },
             },
           }
         }
