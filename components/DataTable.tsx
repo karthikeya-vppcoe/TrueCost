@@ -23,6 +23,14 @@ interface DataTableProps<T> {
 const DataTable = <T extends { id: string }>({ columns, data, title, onRowClick }: DataTableProps<T>) => {
   const isClickable = !!onRowClick;
 
+  const getRowClassName = (isClickable: boolean) => {
+    const baseClasses = 'transition-all duration-200 animate-slide-in-left';
+    const clickableClasses = isClickable 
+      ? 'group hover:bg-gradient-to-r hover:from-brand-primary/5 hover:to-brand-secondary/5 dark:hover:from-brand-primary/10 dark:hover:to-brand-secondary/10 cursor-pointer hover:scale-[1.005]'
+      : '';
+    return `${baseClasses} ${clickableClasses}`;
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 animate-fade-in">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">{title}</h3>
@@ -50,10 +58,7 @@ const DataTable = <T extends { id: string }>({ columns, data, title, onRowClick 
                     <tr 
                       key={item.id} 
                       onClick={() => onRowClick?.(item)}
-                      className={`
-                        transition-all duration-200 animate-slide-in-left
-                        ${isClickable ? 'group hover:bg-gradient-to-r hover:from-brand-primary/5 hover:to-brand-secondary/5 dark:hover:from-brand-primary/10 dark:hover:to-brand-secondary/10 cursor-pointer hover:scale-[1.005]' : ''}
-                      `}
+                      className={getRowClassName(isClickable)}
                       style={{
                         animationDelay: `${index * 0.05}s`
                       }}

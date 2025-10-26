@@ -3,21 +3,24 @@ import React from 'react';
 // FIX: Add file extension to import to fix module resolution error.
 import { ApiHealth, ApiStatusEnum } from '../types.ts';
 
-const statusStyles: { [key in ApiStatusEnum]: { dot: string; text: string; bg: string } } = {
+const statusStyles: { [key in ApiStatusEnum]: { dot: string; text: string; bg: string; border: string } } = {
   [ApiStatusEnum.OPERATIONAL]: { 
     dot: 'bg-green-500', 
     text: 'text-green-600 dark:text-green-400',
-    bg: 'bg-green-50 dark:bg-green-900/20'
+    bg: 'bg-green-50 dark:bg-green-900/20',
+    border: 'border-green-300 dark:border-green-600'
   },
   [ApiStatusEnum.DEGRADED]: { 
     dot: 'bg-yellow-500', 
     text: 'text-yellow-600 dark:text-yellow-400',
-    bg: 'bg-yellow-50 dark:bg-yellow-900/20'
+    bg: 'bg-yellow-50 dark:bg-yellow-900/20',
+    border: 'border-yellow-300 dark:border-yellow-600'
   },
   [ApiStatusEnum.DOWN]: { 
     dot: 'bg-red-500', 
     text: 'text-red-600 dark:text-red-400',
-    bg: 'bg-red-50 dark:bg-red-900/20'
+    bg: 'bg-red-50 dark:bg-red-900/20',
+    border: 'border-red-300 dark:border-red-600'
   },
 };
 
@@ -68,9 +71,7 @@ const ApiStatusIndicator: React.FC<{ status: ApiHealth[] }> = ({ status }) => {
               <div className={`
                 px-3 py-1 rounded-full text-xs font-bold
                 ${statusStyles[api.status].text}
-                border-2 ${api.status === ApiStatusEnum.OPERATIONAL ? 'border-green-300 dark:border-green-600' : 
-                           api.status === ApiStatusEnum.DEGRADED ? 'border-yellow-300 dark:border-yellow-600' : 
-                           'border-red-300 dark:border-red-600'}
+                border-2 ${statusStyles[api.status].border}
                 transition-all duration-300
               `}>
                 {api.status}
