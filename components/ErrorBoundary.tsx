@@ -12,7 +12,7 @@ interface State {
 
 // ErrorBoundary component for catching and handling React errors gracefully
 class ErrorBoundary extends Component<Props, State> {
-  state: State = {
+  state: Readonly<State> = {
     hasError: false,
     error: null,
   };
@@ -25,13 +25,10 @@ class ErrorBoundary extends Component<Props, State> {
     console.error('Uncaught error:', error, errorInfo);
   }
 
-  render() {
-    const { hasError, error } = this.state;
-    const { fallback, children } = this.props;
-
-    if (hasError) {
-      if (fallback) {
-        return fallback;
+  render(): ReactNode {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
       }
 
       return (
@@ -46,7 +43,7 @@ class ErrorBoundary extends Component<Props, State> {
               Oops! Something went wrong
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              {error?.message || 'An unexpected error occurred'}
+              {this.state.error?.message || 'An unexpected error occurred'}
             </p>
             <button
               onClick={() => window.location.reload()}
@@ -59,7 +56,7 @@ class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return children;
+    return this.props.children;
   }
 }
 

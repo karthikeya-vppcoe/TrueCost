@@ -241,3 +241,150 @@ export const fetchPredictiveAnalytics = async (): Promise<import('../types.ts').
         recommendation: 'Based on your spending patterns, we recommend setting aside $1,100 for next month to maintain your savings goals while accommodating typical expenses.',
     };
 };
+
+// Shopping List API functions
+export const fetchShoppingList = async (): Promise<import('../types.ts').ShoppingListItem[]> => {
+    await delay(700);
+    const today = new Date();
+    
+    return [
+        {
+            id: 'item-1',
+            name: 'Sony WH-1000XM5 Wireless Headphones',
+            category: 'Electronics',
+            targetPrice: 349.99,
+            currentPrice: 398.00,
+            merchant: 'Amazon',
+            addedDate: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+            notes: 'Waiting for Black Friday sale',
+            priority: 'high',
+            priceAlert: true,
+            priceHistory: [
+                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 398.00, merchant: 'Amazon' },
+                { date: new Date(today.getTime() - 23 * 24 * 60 * 60 * 1000).toISOString(), price: 379.99, merchant: 'Amazon' },
+                { date: new Date(today.getTime() - 16 * 24 * 60 * 60 * 1000).toISOString(), price: 389.00, merchant: 'Amazon' },
+                { date: new Date(today.getTime() - 9 * 24 * 60 * 60 * 1000).toISOString(), price: 375.50, merchant: 'Amazon' },
+                { date: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(), price: 398.00, merchant: 'Amazon' },
+            ],
+        },
+        {
+            id: 'item-2',
+            name: 'KitchenAid Stand Mixer',
+            category: 'Appliances',
+            targetPrice: 299.00,
+            currentPrice: 279.99,
+            merchant: 'Target',
+            addedDate: new Date(today.getTime() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+            notes: 'Target has best price currently',
+            priority: 'medium',
+            priceAlert: true,
+            priceHistory: [
+                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 349.99, merchant: 'Target' },
+                { date: new Date(today.getTime() - 20 * 24 * 60 * 60 * 1000).toISOString(), price: 329.99, merchant: 'Target' },
+                { date: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString(), price: 299.99, merchant: 'Target' },
+                { date: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString(), price: 289.99, merchant: 'Target' },
+                { date: today.toISOString(), price: 279.99, merchant: 'Target' },
+            ],
+        },
+        {
+            id: 'item-3',
+            name: 'Dyson V15 Cordless Vacuum',
+            category: 'Home & Garden',
+            targetPrice: 549.99,
+            currentPrice: 649.99,
+            merchant: 'Best Buy',
+            addedDate: new Date(today.getTime() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+            priority: 'high',
+            priceAlert: true,
+            priceHistory: [
+                { date: new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000).toISOString(), price: 699.99, merchant: 'Best Buy' },
+                { date: new Date(today.getTime() - 21 * 24 * 60 * 60 * 1000).toISOString(), price: 679.99, merchant: 'Best Buy' },
+                { date: new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString(), price: 659.99, merchant: 'Best Buy' },
+                { date: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(), price: 649.99, merchant: 'Best Buy' },
+            ],
+        },
+        {
+            id: 'item-4',
+            name: 'Nintendo Switch OLED',
+            category: 'Gaming',
+            targetPrice: 319.99,
+            currentPrice: 299.99,
+            merchant: 'Walmart',
+            addedDate: new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+            notes: 'Price dropped! Ready to buy',
+            priority: 'low',
+            priceAlert: false,
+            priceHistory: [
+                { date: new Date(today.getTime() - 25 * 24 * 60 * 60 * 1000).toISOString(), price: 349.99, merchant: 'Walmart' },
+                { date: new Date(today.getTime() - 18 * 24 * 60 * 60 * 1000).toISOString(), price: 329.99, merchant: 'Walmart' },
+                { date: new Date(today.getTime() - 11 * 24 * 60 * 60 * 1000).toISOString(), price: 319.99, merchant: 'Walmart' },
+                { date: new Date(today.getTime() - 4 * 24 * 60 * 60 * 1000).toISOString(), price: 309.99, merchant: 'Walmart' },
+                { date: today.toISOString(), price: 299.99, merchant: 'Walmart' },
+            ],
+        },
+        {
+            id: 'item-5',
+            name: 'Instant Pot Duo Plus 8Qt',
+            category: 'Kitchen',
+            targetPrice: 99.99,
+            currentPrice: 119.95,
+            merchant: 'Amazon',
+            addedDate: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+            priority: 'medium',
+            priceAlert: true,
+            priceHistory: [
+                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 129.99, merchant: 'Amazon' },
+                { date: new Date(today.getTime() - 22 * 24 * 60 * 60 * 1000).toISOString(), price: 124.95, merchant: 'Amazon' },
+                { date: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString(), price: 119.95, merchant: 'Amazon' },
+            ],
+        },
+        {
+            id: 'item-6',
+            name: 'Apple AirPods Pro (2nd Gen)',
+            category: 'Electronics',
+            targetPrice: 199.99,
+            currentPrice: 249.00,
+            merchant: 'Apple Store',
+            addedDate: new Date(today.getTime() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+            notes: 'Checking multiple retailers',
+            priority: 'low',
+            priceAlert: true,
+            priceHistory: [
+                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 249.00, merchant: 'Apple Store' },
+                { date: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString(), price: 249.00, merchant: 'Apple Store' },
+            ],
+        },
+    ];
+};
+
+export const fetchPriceAlerts = async (): Promise<import('../types.ts').PriceAlertNotification[]> => {
+    await delay(400);
+    const today = new Date();
+    
+    return [
+        {
+            id: 'alert-1',
+            itemName: 'KitchenAid Stand Mixer',
+            oldPrice: 349.99,
+            newPrice: 279.99,
+            merchant: 'Target',
+            timestamp: new Date(today.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+            id: 'alert-2',
+            itemName: 'Nintendo Switch OLED',
+            oldPrice: 349.99,
+            newPrice: 299.99,
+            merchant: 'Walmart',
+            timestamp: new Date(today.getTime() - 5 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+            id: 'alert-3',
+            itemName: 'Dyson V15 Cordless Vacuum',
+            oldPrice: 699.99,
+            newPrice: 649.99,
+            merchant: 'Best Buy',
+            timestamp: new Date(today.getTime() - 24 * 60 * 60 * 1000).toISOString(),
+        },
+    ];
+};

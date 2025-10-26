@@ -1,7 +1,7 @@
 // types.ts
 
 export type AdminView = 'dashboard' | 'mapping' | 'settings';
-export type UserView = 'dashboard' | 'profile' | 'subscriptions' | 'priceComparison' | 'analytics';
+export type UserView = 'dashboard' | 'profile' | 'subscriptions' | 'priceComparison' | 'analytics' | 'shoppingList';
 
 export type Theme = 'light' | 'dark';
 
@@ -175,4 +175,35 @@ export interface PredictiveAnalytics {
   confidence: number;
   factors: string[];
   recommendation: string;
+}
+
+// Shopping List types
+export interface ShoppingListItem {
+  id: string;
+  name: string;
+  category: string;
+  targetPrice: number;
+  currentPrice: number;
+  merchant: string;
+  imageUrl?: string;
+  addedDate: string;
+  notes?: string;
+  priority: 'high' | 'medium' | 'low';
+  priceHistory: PriceHistoryPoint[];
+  priceAlert: boolean;
+}
+
+export interface PriceHistoryPoint {
+  date: string;
+  price: number;
+  merchant: string;
+}
+
+export interface PriceAlertNotification {
+  id: string;
+  itemName: string;
+  oldPrice: number;
+  newPrice: number;
+  merchant: string;
+  timestamp: string;
 }

@@ -166,11 +166,21 @@ TrueCost/
 - **Advanced Analytics**: Deep insights with AI-powered predictions and spending trends
 - **Shopping History**: View past transactions with detailed breakdowns
 - **Price Comparison**: Compare prices across multiple retailers
+- **Smart Shopping List** 🆕: Track items with price history and get alerts when prices drop
 - **Subscriptions**: Manage active subscriptions
 - **Profile Management**: Update user information
 - **Savings Goals**: Set and track financial goals
 - **Achievements & Rewards**: Unlock milestones and earn points
 - **Budget Insights**: AI-powered spending analysis and recommendations
+
+### New! Smart Shopping List Features
+- 📊 **Price History Tracking**: Visualize price trends over time with interactive charts
+- 🔔 **Price Drop Alerts**: Get notified when items reach your target price
+- 🎯 **Priority Management**: Organize items by priority (high/medium/low)
+- 💰 **Savings Calculator**: See potential savings at a glance
+- 📈 **Multi-Merchant Tracking**: Monitor prices across different retailers
+- ✅ **Purchase Tracking**: Mark items as purchased when you buy them
+- 🎨 **Beautiful UI**: Smooth animations and responsive design
 
 ## Contributing
 
