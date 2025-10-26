@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://truecost.app/sitemap.xml
+# Update this sitemap URL to match your deployed domain
+# Sitemap: https://yourdomain.com/sitemap.xml
