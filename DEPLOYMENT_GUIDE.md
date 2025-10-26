@@ -72,7 +72,6 @@ vercel
 The `vercel.json` file is pre-configured with:
 - Security headers (XSS protection, frame options, etc.)
 - SPA routing (rewrites all routes to index.html)
-- Environment variable mapping
 
 ## Deploy to Render
 
