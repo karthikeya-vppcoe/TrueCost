@@ -5,7 +5,7 @@ import DashboardCard from '../components/DashboardCard.tsx';
 import DataTable from '../components/DataTable.tsx';
 import UserSavingsChart from '../components/UserSavingsChart.tsx';
 import SavingsGoal from '../components/SavingsGoal.tsx';
-import { PiggyBankIcon, WarningIcon, ReceiptIcon } from '../components/Icons.tsx';
+import { PiggyBankIcon, WarningIcon, ReceiptIcon, ChartBarIcon } from '../components/Icons.tsx';
 import { formatCurrency, formatDate } from '../utils/formatters.ts';
 import SkeletonLoader from '../components/SkeletonLoader.tsx';
 import CheckoutDetailModal from '../components/CheckoutDetailModal.tsx';
@@ -117,6 +117,29 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                             isLoading={isLoading}
                             onClick={() => onNavigate('subscriptions')}
                         />
+                    </div>
+
+                    {/* Quick Access Feature Card */}
+                    <div className="mb-4 sm:mb-6">
+                        <button 
+                            onClick={() => onNavigate('priceComparison')}
+                            className="w-full bg-gradient-to-r from-brand-secondary to-green-600 hover:from-green-600 hover:to-brand-secondary text-white p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-4">
+                                    <div className="bg-white/20 p-3 rounded-lg">
+                                        <ChartBarIcon className="w-8 h-8" />
+                                    </div>
+                                    <div className="text-left">
+                                        <h3 className="text-lg sm:text-xl font-bold mb-1">Price Comparison Tool</h3>
+                                        <p className="text-sm sm:text-base text-white/90">Compare prices across retailers and find the best deals</p>
+                                    </div>
+                                </div>
+                                <svg className="w-6 h-6 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </button>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 mb-4 sm:mb-6">
