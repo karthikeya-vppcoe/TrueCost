@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 // FIX: Add file extension to import to fix module resolution error.
 import { ValidationErrors } from '../types.ts';
 
