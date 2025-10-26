@@ -11,6 +11,7 @@ import UserDashboardView from './views/UserDashboardView.tsx';
 import UserProfileView from './views/UserProfileView.tsx';
 import SubscriptionsView from './views/SubscriptionsView.tsx';
 import UserHeader from './components/UserHeader.tsx';
+import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { NotificationProvider } from './context/NotificationContext.tsx';
 import { User, AdminView, Theme, UserRole, UserView } from './types.ts';
 
@@ -99,43 +100,45 @@ const App: React.FC = () => {
     if (appView === 'userAuth') return <UserAuthView onLogin={handleLogin} onBack={() => setAppView('auth')} />;
 
     return (
-        <NotificationProvider>
-            {user?.role === 'admin' ? (
-                <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
-                    <Sidebar
-                        currentView={currentAdminView}
-                        setCurrentView={setCurrentAdminView}
-                        isSidebarOpen={isSidebarOpen}
-                        setIsSidebarOpen={setIsSidebarOpen}
-                    />
-                    <div className="flex-1 flex flex-col overflow-hidden">
-                        <Header
-                            user={user}
+        <ErrorBoundary>
+            <NotificationProvider>
+                {user?.role === 'admin' ? (
+                    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+                        <Sidebar
                             currentView={currentAdminView}
+                            setCurrentView={setCurrentAdminView}
+                            isSidebarOpen={isSidebarOpen}
                             setIsSidebarOpen={setIsSidebarOpen}
-                            onLogout={handleLogout}
-                            theme={theme}
-                            setTheme={setTheme}
                         />
-                        {renderAdminContent()}
+                        <div className="flex-1 flex flex-col overflow-hidden">
+                            <Header
+                                user={user}
+                                currentView={currentAdminView}
+                                setIsSidebarOpen={setIsSidebarOpen}
+                                onLogout={handleLogout}
+                                theme={theme}
+                                setTheme={setTheme}
+                            />
+                            {renderAdminContent()}
+                        </div>
                     </div>
-                </div>
-            ) : (
-                 <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
-                    {user && (
-                         <UserHeader 
-                            user={user}
-                            onLogout={handleLogout}
-                            theme={theme}
-                            setTheme={setTheme}
-                            onNavigateProfile={() => setCurrentUserView('profile')}
-                        />
-                    )}
-                   
-                    {renderUserContent()}
-                </div>
-            )}
-        </NotificationProvider>
+                ) : (
+                     <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
+                        {user && (
+                             <UserHeader 
+                                user={user}
+                                onLogout={handleLogout}
+                                theme={theme}
+                                setTheme={setTheme}
+                                onNavigateProfile={() => setCurrentUserView('profile')}
+                            />
+                        )}
+                       
+                        {renderUserContent()}
+                    </div>
+                )}
+            </NotificationProvider>
+        </ErrorBoundary>
     );
 };
 
