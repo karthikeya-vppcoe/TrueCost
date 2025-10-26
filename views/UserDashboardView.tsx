@@ -5,7 +5,7 @@ import DashboardCard from '../components/DashboardCard.tsx';
 import DataTable from '../components/DataTable.tsx';
 import UserSavingsChart from '../components/UserSavingsChart.tsx';
 import SavingsGoal from '../components/SavingsGoal.tsx';
-import { PiggyBankIcon, WarningIcon, ReceiptIcon } from '../components/Icons.tsx';
+import { PiggyBankIcon, WarningIcon, ReceiptIcon, ChartBarIcon } from '../components/Icons.tsx';
 import { formatCurrency, formatDate } from '../utils/formatters.ts';
 import SkeletonLoader from '../components/SkeletonLoader.tsx';
 import CheckoutDetailModal from '../components/CheckoutDetailModal.tsx';
@@ -83,10 +83,10 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
         <>
             <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 animate-fade-in overflow-y-auto">
                 <div className="max-w-7xl mx-auto">
-                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Welcome back, {user.name}!</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-4 sm:mb-6">Welcome back, {user.name}!</h1>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
-                        <div className="md:col-span-2 xl:col-span-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                        <div className="sm:col-span-2 xl:col-span-1">
                              <SavingsGoal
                                 currentAmount={savings?.totalSavings || 0}
                                 goalAmount={savingsGoal}
@@ -119,12 +119,35 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+                    {/* Quick Access Feature Card */}
+                    <div className="mb-4 sm:mb-6">
+                        <button 
+                            onClick={() => onNavigate('priceComparison')}
+                            className="w-full bg-gradient-to-r from-brand-secondary to-green-600 hover:from-green-600 hover:to-brand-secondary text-white p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-4">
+                                    <div className="bg-white/20 p-3 rounded-lg">
+                                        <ChartBarIcon className="w-8 h-8" />
+                                    </div>
+                                    <div className="text-left">
+                                        <h3 className="text-lg sm:text-xl font-bold mb-1">Price Comparison Tool</h3>
+                                        <p className="text-sm sm:text-base text-white/90">Compare prices across retailers and find the best deals</p>
+                                    </div>
+                                </div>
+                                <svg className="w-6 h-6 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 mb-4 sm:mb-6">
                         <div className="lg:col-span-3">
-                            {isLoading ? <SkeletonLoader className="h-96 w-full rounded-xl" /> : <UserSavingsChart data={activity} />}
+                            {isLoading ? <SkeletonLoader className="h-80 sm:h-96 w-full rounded-xl" /> : <UserSavingsChart data={activity} />}
                         </div>
                         <div className="lg:col-span-2">
-                            {isLoading ? <SkeletonLoader className="h-96 w-full rounded-xl" /> : 
+                            {isLoading ? <SkeletonLoader className="h-80 sm:h-96 w-full rounded-xl" /> : 
                                 <DataTable 
                                     title="Recent Activity" 
                                     columns={activityColumns} 

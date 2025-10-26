@@ -1,7 +1,7 @@
 // types.ts
 
 export type AdminView = 'dashboard' | 'mapping' | 'settings';
-export type UserView = 'dashboard' | 'profile' | 'subscriptions';
+export type UserView = 'dashboard' | 'profile' | 'subscriptions' | 'priceComparison';
 
 export type Theme = 'light' | 'dark';
 
@@ -100,6 +100,27 @@ export interface Subscription {
     amount: number;
     cycle: 'monthly' | 'yearly';
     nextPaymentDate: string;
+}
+
+export interface PriceComparisonMerchant {
+    merchant: string;
+    price: number;
+    availability: 'In Stock' | 'Out of Stock' | 'Limited Stock';
+    shipping: number;
+    totalCost: number;
+    rating?: number;
+    estimatedDelivery?: string;
+}
+
+export interface PriceComparisonItem {
+    id: string;
+    productName: string;
+    category: string;
+    imageUrl?: string;
+    merchants: PriceComparisonMerchant[];
+    lowestPrice: number;
+    highestPrice: number;
+    averagePrice: number;
 }
 
 export type ValidationErrors<T> = {

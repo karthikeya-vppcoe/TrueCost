@@ -22,7 +22,7 @@ const useFormValidation = <T extends Record<string, any>>(
     const validationErrors = validate(values);
     setErrors(validationErrors);
     setIsFormValid(Object.keys(validationErrors).length === 0);
-  }, [values, validate]);
+  }, [values]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
