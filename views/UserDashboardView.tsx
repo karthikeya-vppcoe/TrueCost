@@ -124,7 +124,7 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                     </div>
 
                     {/* Quick Access Feature Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 sm:mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 sm:mb-6">
                         <button 
                             onClick={() => onNavigate('priceComparison')}
                             className="w-full bg-gradient-to-r from-brand-secondary to-green-600 hover:from-green-600 hover:to-brand-secondary text-white p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]"
@@ -135,8 +135,8 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                                         <ChartBarIcon className="w-8 h-8" />
                                     </div>
                                     <div className="text-left">
-                                        <h3 className="text-lg sm:text-xl font-bold mb-1">Price Comparison Tool</h3>
-                                        <p className="text-sm sm:text-base text-white/90">Compare prices across retailers and find the best deals</p>
+                                        <h3 className="text-lg sm:text-xl font-bold mb-1">Price Comparison</h3>
+                                        <p className="text-sm sm:text-base text-white/90">Find the best deals</p>
                                     </div>
                                 </div>
                                 <svg className="w-6 h-6 hidden sm:block transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,7 +158,29 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                                     </div>
                                     <div className="text-left">
                                         <h3 className="text-lg sm:text-xl font-bold mb-1">Advanced Analytics</h3>
-                                        <p className="text-sm sm:text-base text-white/90">Deep insights and AI-powered spending predictions</p>
+                                        <p className="text-sm sm:text-base text-white/90">AI-powered insights</p>
+                                    </div>
+                                </div>
+                                <svg className="w-6 h-6 hidden sm:block transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </button>
+
+                        <button 
+                            onClick={() => onNavigate('shoppingList')}
+                            className="w-full bg-gradient-to-r from-orange-500 to-pink-600 hover:from-pink-600 hover:to-orange-500 text-white p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-4">
+                                    <div className="bg-white/20 p-3 rounded-lg animate-pulse-slow">
+                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                    </div>
+                                    <div className="text-left">
+                                        <h3 className="text-lg sm:text-xl font-bold mb-1">Shopping List 🆕</h3>
+                                        <p className="text-sm sm:text-base text-white/90">Track prices & alerts</p>
                                     </div>
                                 </div>
                                 <svg className="w-6 h-6 hidden sm:block transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
