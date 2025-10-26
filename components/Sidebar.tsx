@@ -33,29 +33,29 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, isSideba
       ></div>
 
       <aside
-        className={`w-64 flex-shrink-0 bg-gray-800 text-gray-300 flex flex-col fixed inset-y-0 left-0 z-30 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+        className={`w-64 flex-shrink-0 bg-gradient-to-b from-gray-900 to-gray-800 text-gray-300 flex flex-col fixed inset-y-0 left-0 z-30 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 shadow-2xl ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="h-16 flex items-center justify-center space-x-2 bg-gray-900 shadow-md">
-            <LogoIcon className="h-8 w-8 text-brand-secondary" aria-hidden="true" />
-            <h1 className="text-2xl font-bold text-white tracking-wider">TrueCost</h1>
+        <div className="h-16 flex items-center justify-center space-x-3 bg-gradient-to-r from-brand-secondary to-green-600 shadow-lg">
+            <LogoIcon className="h-10 w-10 text-white drop-shadow-lg" aria-hidden="true" />
+            <h1 className="text-2xl font-bold text-white tracking-wide">TrueCost</h1>
         </div>
         <nav className="flex-grow px-4 py-6" aria-label="Admin menu">
-          <ul>
+          <ul className="space-y-2">
             {navItems.map((item) => (
-              <li key={item.id} className="mb-2">
+              <li key={item.id}>
                 <button
                   onClick={() => {
                     setCurrentView(item.id);
                     setIsSidebarOpen(false); // Close sidebar on mobile after navigation
                   }}
-                  className={`w-full flex items-center py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-primary ${
+                  className={`w-full flex items-center py-3 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-primary ${
                     currentView === item.id
-                      ? 'bg-brand-secondary text-white shadow-lg'
-                      : 'hover:bg-gray-700 hover:text-white'
+                      ? 'bg-gradient-to-r from-brand-secondary to-green-600 text-white shadow-lg transform scale-105'
+                      : 'hover:bg-gray-700 hover:text-white hover:translate-x-1'
                   }`}
                   aria-label={item.label}
                   aria-current={currentView === item.id ? 'page' : undefined}

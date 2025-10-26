@@ -5,6 +5,7 @@ import DashboardCard from '../components/DashboardCard.tsx';
 import DataTable from '../components/DataTable.tsx';
 import UserSavingsChart from '../components/UserSavingsChart.tsx';
 import SavingsGoal from '../components/SavingsGoal.tsx';
+import BudgetInsights from '../components/BudgetInsights.tsx';
 import { PiggyBankIcon, WarningIcon, ReceiptIcon, ChartBarIcon } from '../components/Icons.tsx';
 import { formatCurrency, formatDate } from '../utils/formatters.ts';
 import SkeletonLoader from '../components/SkeletonLoader.tsx';
@@ -146,16 +147,35 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                         <div className="lg:col-span-3">
                             {isLoading ? <SkeletonLoader className="h-80 sm:h-96 w-full rounded-xl" /> : <UserSavingsChart data={activity} />}
                         </div>
-                        <div className="lg:col-span-2">
-                            {isLoading ? <SkeletonLoader className="h-80 sm:h-96 w-full rounded-xl" /> : 
-                                <DataTable 
-                                    title="Recent Activity" 
-                                    columns={activityColumns} 
-                                    data={activity.slice(0, 7)}
-                                    onRowClick={handleRowClick} 
+                        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+                            {/* Budget Insights Component */}
+                            {isLoading ? (
+                                <SkeletonLoader className="h-96 w-full rounded-xl" />
+                            ) : (
+                                <BudgetInsights
+                                    totalSpent={320.45}
+                                    monthlyBudget={500}
+                                    topCategories={[
+                                        { name: 'Groceries', amount: 145.30, color: '#10B981' },
+                                        { name: 'Electronics', amount: 85.50, color: '#3B82F6' },
+                                        { name: 'Household', amount: 54.65, color: '#F59E0B' },
+                                        { name: 'Personal Care', amount: 35.00, color: '#8B5CF6' }
+                                    ]}
                                 />
-                            }
+                            )}
                         </div>
+                    </div>
+
+                    {/* Recent Activity Table */}
+                    <div className="mb-4 sm:mb-6">
+                        {isLoading ? <SkeletonLoader className="h-96 w-full rounded-xl" /> : 
+                            <DataTable 
+                                title="Recent Activity" 
+                                columns={activityColumns} 
+                                data={activity.slice(0, 7)}
+                                onRowClick={handleRowClick} 
+                            />
+                        }
                     </div>
                 </div>
             </main>
