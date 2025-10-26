@@ -19,7 +19,13 @@ export const SettingsIcon: React.FC<IconProps> = ({ className }) => (
 );
 
 export const LogoIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V17c0-.55-.45-1-1-1h-.82c-.55 0-1 .45-1 1v1.09c-1.21-.25-2.25-.9-3-1.64.2-.2.38-.41.54-.64.16-.23.3-.49.42-.77.12-.28.21-.58.26-.9.05-.31.05-.63.02-.94-.03-.31-.1-.62-.21-.91-.11-.29-.25-.57-.43-.82s-.4-.48-.65-.68c-.25-.2-.53-.37-.82-.51-.29-.14-.6-.25-.91-.32s-.63-.12-.94-.1V7c0-.55.45-1 1-1h.82c.55 0 1-.45 1-1V4.91c1.21.25 2.25.9 3 1.64-.2.2-.38.41-.54.64-.16.23-.3.49-.42.77-.12.28-.21.58-.26.9-.05.31-.05.63-.02.94.03.31.1.62.21.91.11.29.25.57.43.82.18.25.4.48.65.68.25.2.53.37.82.51.29.14.6.25.91.32.31.07.63.12.94.1V17c0 .55-.45 1-1 1h-.82c-.55 0-1-.45-1-1z"/></svg>
+    <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Shopping cart base */}
+        <path d="M14 38C12.9 38 12.01 38.9 12.01 40C12.01 41.1 12.9 42 14 42C15.1 42 16 41.1 16 40C16 38.9 15.1 38 14 38ZM6 6V10H10L16.6 23.59L14.25 27.95C13.97 28.45 13.8 29.04 13.8 29.67C13.8 31.4 15.2 32.8 16.93 32.8H38V28.8H17.82C17.59 28.8 17.42 28.63 17.42 28.4L17.49 28.13L19.1 25.2H32.55C33.63 25.2 34.6 24.59 35.1 23.67L41.68 12.47C41.88 12.14 42 11.75 42 11.33C42 10.21 41.12 9.33 40 9.33H14.21L12.58 6H6ZM34 38C32.9 38 32.01 38.9 32.01 40C32.01 41.1 32.9 42 34 42C35.1 42 36 41.1 36 40C36 38.9 35.1 38 34 38Z" fill="currentColor"/>
+        {/* Dollar sign overlay */}
+        <circle cx="24" cy="16" r="10" fill="currentColor"/>
+        <path d="M23 10V12M23 20V22M26.5 12.5C26.5 11.1193 25.3807 10 24 10C22.6193 10 21.5 11.1193 21.5 12.5C21.5 13.8807 22.6193 15 24 15H24.5C25.8807 15 27 16.1193 27 17.5C27 18.8807 25.8807 20 24.5 20H24C22.6193 20 21.5 18.8807 21.5 17.5" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
 );
 
 export const MenuIcon: React.FC<IconProps> = ({ className }) => (
@@ -97,5 +103,30 @@ export const SearchIcon: React.FC<IconProps> = ({ className }) => (
 export const ChartBarIcon: React.FC<IconProps> = ({ className }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+  </svg>
+);
+
+export const CurrencyDollarIcon: React.FC<IconProps> = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
+export const LightBulbIcon: React.FC<IconProps> = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+  </svg>
+);
+
+export const ChartPieIcon: React.FC<IconProps> = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+  </svg>
+);
+
+export const SparklesIcon: React.FC<IconProps> = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
   </svg>
 );

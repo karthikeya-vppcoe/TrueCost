@@ -24,12 +24,14 @@ const LogoutIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" })
 
 const UserHeader: React.FC<UserHeaderProps> = ({ user, onLogout, theme, setTheme, onNavigateProfile }) => {
   return (
-    <header className="sticky top-0 z-10 bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg shadow-sm flex-shrink-0">
+    <header className="sticky top-0 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl shadow-lg flex-shrink-0 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-                <div className="flex items-center space-x-2">
-                    <LogoIcon className="h-8 w-8 text-brand-secondary" />
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-wider">TrueCost</h1>
+                <div className="flex items-center space-x-3 group">
+                    <div className="p-2 bg-gradient-to-br from-brand-secondary to-green-600 rounded-lg shadow-md group-hover:shadow-lg transition-shadow duration-300">
+                        <LogoIcon className="h-7 w-7 text-white" />
+                    </div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent tracking-wide">TrueCost</h1>
                 </div>
                 <div className="flex items-center space-x-4">
                     <ThemeToggle theme={theme} setTheme={setTheme} />

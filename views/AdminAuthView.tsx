@@ -44,15 +44,17 @@ const AdminAuthView: React.FC<AdminAuthViewProps> = ({ onLogin, onBack }) => {
     };
 
   return (
-    <div className="flex items-center justify-center w-full min-h-screen bg-gray-100 dark:bg-gray-900 px-4 sm:px-6 animate-fade-in">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl relative">
-        <button onClick={onBack} className="absolute top-6 left-6 flex items-center space-x-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+    <div className="flex items-center justify-center w-full min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4 sm:px-6 animate-fade-in">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl relative border border-gray-200 dark:border-gray-700">
+        <button onClick={onBack} className="absolute top-6 left-6 flex items-center space-x-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all hover:translate-x-1">
             <ArrowLeftIcon className="w-4 h-4" />
             <span>Back</span>
         </button>
         <div className="flex flex-col items-center space-y-3 pt-8">
-          <LogoIcon className="w-12 h-12 text-brand-primary" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="p-3 bg-gradient-to-br from-brand-primary to-blue-700 rounded-xl shadow-lg">
+            <LogoIcon className="w-14 h-14 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-primary to-blue-700 bg-clip-text text-transparent">
             Admin Login
           </h1>
         </div>
