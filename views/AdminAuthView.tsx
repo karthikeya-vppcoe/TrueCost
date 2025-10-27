@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 // FIX: Add file extension to import to fix module resolution error.
 import { LogoIcon, ArrowLeftIcon } from '../components/Icons.tsx';
 // FIX: Import ValidationErrors from types.ts where it is exported, not from useFormValidation.
@@ -6,6 +6,7 @@ import { LogoIcon, ArrowLeftIcon } from '../components/Icons.tsx';
 import { User, ValidationErrors } from '../types.ts';
 // FIX: Add file extension to import to fix module resolution error.
 import useFormValidation from '../hooks/useFormValidation.ts';
+import { validateCredentials } from '../services/authService.ts';
 
 
 interface AdminAuthViewProps {
@@ -14,6 +15,7 @@ interface AdminAuthViewProps {
 }
 
 const AdminAuthView: React.FC<AdminAuthViewProps> = ({ onLogin, onBack }) => {
+    const [authError, setAuthError] = useState<string>('');
     
     const validate = (values: any): ValidationErrors<any> => {
         const errors: ValidationErrors<any> = {};
@@ -32,13 +34,15 @@ const AdminAuthView: React.FC<AdminAuthViewProps> = ({ onLogin, onBack }) => {
     }, validate);
 
     const handleLogin = () => {
+        setAuthError('');
         if (isFormValid) {
-            if (values.email === 'admin@truecost.com' && values.password === 'password') {
-                onLogin({ name: 'Admin User', email: 'admin@truecost.com', role: 'admin' });
+            const authenticatedUser = validateCredentials(values.email, values.password);
+            if (authenticatedUser && authenticatedUser.role === 'admin') {
+                onLogin(authenticatedUser);
+            } else if (authenticatedUser && authenticatedUser.role !== 'admin') {
+                setAuthError('This account does not have admin privileges.');
             } else {
-                // In a real app, this error would come from the backend.
-                // We're not setting it in the form errors as it's not a field-specific validation error.
-                alert('Invalid admin credentials.');
+                setAuthError('Invalid admin credentials. Please try again.');
             }
         }
     };
@@ -58,6 +62,12 @@ const AdminAuthView: React.FC<AdminAuthViewProps> = ({ onLogin, onBack }) => {
             Admin Login
           </h1>
         </div>
+        
+        {authError && (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-600 dark:text-red-400">{authError}</p>
+            </div>
+        )}
         
         <form className="mt-6 space-y-4" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
             <div>
