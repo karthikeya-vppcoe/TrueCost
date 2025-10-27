@@ -6,6 +6,7 @@ import { LogoIcon, ArrowLeftIcon } from '../components/Icons.tsx';
 import { User, ValidationErrors } from '../types.ts';
 // FIX: Add file extension to import to fix module resolution error.
 import useFormValidation from '../hooks/useFormValidation.ts';
+import { validateCredentials, registerUser, userExists } from '../services/authService.ts';
 
 interface UserAuthViewProps {
   onLogin: (user: User) => void;
@@ -16,6 +17,7 @@ type AuthMode = 'signin' | 'signup';
 
 const UserAuthView: React.FC<UserAuthViewProps> = ({ onLogin, onBack }) => {
   const [mode, setMode] = useState<AuthMode>('signin');
+  const [authError, setAuthError] = useState<string>('');
 
   const validate = (values: any): ValidationErrors<any> => {
         const errors: ValidationErrors<any> = {};
@@ -62,12 +64,28 @@ const UserAuthView: React.FC<UserAuthViewProps> = ({ onLogin, onBack }) => {
 
 
   const handleAuth = () => {
+    setAuthError('');
     if (isFormValid) {
         if (mode === 'signup') {
-            onLogin({ name: values.fullName, email: values.email, role: 'user' });
+            // Check if user already exists
+            if (userExists(values.email)) {
+                setAuthError('An account with this email already exists. Please sign in instead.');
+                return;
+            }
+            const newUser = registerUser({
+                fullName: values.fullName,
+                email: values.email,
+                password: values.password
+            });
+            onLogin(newUser);
         } else {
-            // In a real app, you'd fetch the user's name from the backend on sign-in
-            onLogin({ name: 'Valued User', email: values.email, role: 'user' });
+            // Sign in - validate credentials
+            const authenticatedUser = validateCredentials(values.email, values.password);
+            if (authenticatedUser) {
+                onLogin(authenticatedUser);
+            } else {
+                setAuthError('Invalid email or password. Please try again.');
+            }
         }
     }
   };
@@ -105,18 +123,29 @@ const UserAuthView: React.FC<UserAuthViewProps> = ({ onLogin, onBack }) => {
         <div>
             <div className="flex border-b border-gray-200 dark:border-gray-700">
                 <button 
-                    onClick={() => setMode('signin')}
+                    onClick={() => {
+                        setMode('signin');
+                        setAuthError('');
+                    }}
                     className={`w-full py-3 text-sm font-medium transition-colors outline-none ${mode === 'signin' ? 'border-b-2 border-brand-primary text-brand-primary' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                 >
                     Sign In
                 </button>
                 <button
-                    onClick={() => setMode('signup')}
+                    onClick={() => {
+                        setMode('signup');
+                        setAuthError('');
+                    }}
                     className={`w-full py-3 text-sm font-medium transition-colors outline-none ${mode === 'signup' ? 'border-b-2 border-brand-primary text-brand-primary' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                 >
                     Sign Up
                 </button>
             </div>
+            {authError && (
+                <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-600 dark:text-red-400">{authError}</p>
+                </div>
+            )}
             <form className="mt-6 space-y-4" onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
                 {mode === 'signup' && renderInput('fullName', 'text', 'Full Name')}
                 {renderInput('email', 'email', 'Email Address')}

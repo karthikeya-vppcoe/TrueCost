@@ -17,6 +17,7 @@ import UserHeader from './components/UserHeader.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { NotificationProvider } from './context/NotificationContext.tsx';
 import { User, AdminView, Theme, UserRole, UserView } from './types.ts';
+import { loadSession, saveSession, clearSession } from './services/authService.ts';
 
 type AppView = 'auth' | 'adminAuth' | 'userAuth' | 'app';
 
@@ -44,13 +45,24 @@ const App: React.FC = () => {
         }
     }, [theme]);
 
+    // Restore session on mount
+    useEffect(() => {
+        const savedUser = loadSession();
+        if (savedUser) {
+            setUser(savedUser);
+            setAppView('app');
+        }
+    }, []);
+
     const handleLogin = (loggedInUser: User) => {
         setUser(loggedInUser);
+        saveSession(loggedInUser);
         setAppView('app');
     };
     
     const handleLogout = () => {
         setUser(null);
+        clearSession();
         setAppView('auth');
         // Reset sub-views
         setCurrentUserView('dashboard');
@@ -59,7 +71,9 @@ const App: React.FC = () => {
 
     const handleUpdateUser = (updatedUser: Partial<User>) => {
         if (user) {
-            setUser({ ...user, ...updatedUser });
+            const newUser = { ...user, ...updatedUser };
+            setUser(newUser);
+            saveSession(newUser);
         }
     };
     
