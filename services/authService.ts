@@ -2,19 +2,24 @@
 
 import { User } from '../types';
 
-// Mock user database
-const MOCK_USERS = [
+// Mock user database - mutable to allow new registrations
+const MOCK_USERS: Array<{
+  email: string;
+  password: string;
+  name: string;
+  role: 'user' | 'admin';
+}> = [
   {
     email: 'user@truecost.com',
     password: 'password123',
     name: 'John Doe',
-    role: 'user' as const
+    role: 'user'
   },
   {
     email: 'admin@truecost.com',
     password: 'password',
     name: 'Admin User',
-    role: 'admin' as const
+    role: 'admin'
   }
 ];
 
@@ -44,8 +49,14 @@ export const validateCredentials = (email: string, password: string): User | nul
 
 // Register new user (mock implementation)
 export const registerUser = (data: SignupData): User => {
-  // In a real app, this would make an API call to register the user
-  // For now, we'll just create a user object
+  // Add the new user to the mock database
+  MOCK_USERS.push({
+    email: data.email,
+    password: data.password,
+    name: data.fullName,
+    role: 'user'
+  });
+  
   return {
     name: data.fullName,
     email: data.email,
@@ -67,7 +78,13 @@ export const loadSession = (): User | null => {
   try {
     const sessionData = localStorage.getItem(SESSION_KEY);
     if (sessionData) {
-      return JSON.parse(sessionData);
+      const parsed = JSON.parse(sessionData);
+      // Validate the parsed data has required User fields
+      if (parsed && typeof parsed.name === 'string' && 
+          typeof parsed.email === 'string' && 
+          (parsed.role === 'user' || parsed.role === 'admin')) {
+        return parsed as User;
+      }
     }
   } catch (error) {
     console.error('Failed to load session:', error);
