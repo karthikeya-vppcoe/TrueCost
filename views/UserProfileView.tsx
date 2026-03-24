@@ -106,15 +106,15 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onBack, onUpdat
 
   return (
     <>
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 animate-fade-in overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-gray-900 animate-fade-in overflow-y-auto">
             <div className="max-w-5xl mx-auto">
-                 <button onClick={onBack} className="mb-4 sm:mb-6 text-sm text-brand-primary hover:underline flex items-center">
+                 <button onClick={onBack} className="mb-4 sm:mb-6 text-sm text-teal-600 dark:text-teal-400 hover:underline flex items-center">
                     &larr; Back to Dashboard
                 </button>
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6 lg:p-8">
                     <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6 lg:space-x-8 mb-6 sm:mb-8">
                         <img 
-                            className="h-20 w-20 sm:h-24 sm:w-24 rounded-full ring-4 ring-brand-secondary" 
+                            className="h-20 w-20 sm:h-24 sm:w-24 rounded-full ring-4 ring-teal-500" 
                             src={`https://i.pravatar.cc/150?u=${user.email}`} 
                             alt="User avatar" 
                         />
@@ -131,7 +131,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onBack, onUpdat
                                         name="name" 
                                         value={values.name} 
                                         onChange={handleChange}
-                                        className={`w-full md:w-2/3 px-3 py-2 text-xl sm:text-2xl font-bold bg-gray-100 dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                                        className={`w-full md:w-2/3 px-3 py-2 text-xl sm:text-2xl font-bold bg-gray-100 dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                                     />
                                     {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
                                 </div>
@@ -141,7 +141,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onBack, onUpdat
                                         name="email" 
                                         value={values.email} 
                                         onChange={handleChange}
-                                        className={`w-full md:w-2/3 px-3 py-2 text-sm sm:text-md bg-gray-100 dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                                        className={`w-full md:w-2/3 px-3 py-2 text-sm sm:text-md bg-gray-100 dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                                     />
                                     {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
                                 </div>
@@ -149,12 +149,12 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onBack, onUpdat
                         )}
                         <div className="flex-shrink-0">
                              {!isEditing ? (
-                                <button onClick={() => setIsEditing(true)} className="px-4 py-2 bg-brand-secondary text-white font-semibold rounded-lg shadow-sm hover:bg-green-700 transition-colors">
+                                <button onClick={() => setIsEditing(true)} className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-sm hover:bg-teal-700 transition-colors">
                                     Edit Profile
                                 </button>
                             ) : (
                                 <div className="flex space-x-2">
-                                    <button onClick={handleSave} disabled={!isFormValid} className="px-4 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-sm hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                                    <button onClick={handleSave} disabled={!isFormValid} className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-sm hover:bg-teal-700 disabled:opacity-50 transition-colors">
                                         Save
                                     </button>
                                     <button onClick={handleCancel} className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg shadow-sm hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors">
@@ -172,7 +172,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onBack, onUpdat
                             value={savings?.totalSavings || 0}
                             prefix="$"
                             icon={<PiggyBankIcon className="h-6 w-6 text-white" />}
-                            colorClass="bg-green-500"
+                            colorClass="bg-teal-600"
                             isLoading={isLoading}
                         />
                         <DashboardCard 
@@ -180,14 +180,14 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onBack, onUpdat
                             value={savings?.averageSavings || 0}
                             prefix="$"
                             icon={<PiggyBankIcon className="h-6 w-6 text-white" />}
-                            colorClass="bg-blue-500"
+                            colorClass="bg-indigo-500"
                             isLoading={isLoading}
                         />
                         <DashboardCard 
                             title="Potential Risks Detected"
                             value={savings?.risksDetected || 0}
                             icon={<WarningIcon className="h-6 w-6 text-white" />}
-                            colorClass="bg-yellow-500"
+                            colorClass="bg-amber-500"
                             isLoading={isLoading}
                         />
                     </div>

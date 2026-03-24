@@ -1,27 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    SpendingTrend, 
-    CategorySpending, 
-    MonthlyComparison, 
+import {
+    SpendingTrend,
+    CategorySpending,
+    MonthlyComparison,
     AnalyticsInsight,
-    PredictiveAnalytics 
+    PredictiveAnalytics,
 } from '../types.ts';
-import { 
-    fetchSpendingTrends, 
-    fetchCategorySpending, 
+import {
+    fetchSpendingTrends,
+    fetchCategorySpending,
     fetchMonthlyComparison,
     fetchAnalyticsInsights,
-    fetchPredictiveAnalytics
+    fetchPredictiveAnalytics,
 } from '../services/api.ts';
 import { formatCurrency } from '../utils/formatters.ts';
-import { ChartBarIcon, TrendingUpIcon, TrendingDownIcon, SparklesIcon } from '../components/Icons.tsx';
+import { ChartBarIcon, TrendingUpIcon, TrendingDownIcon } from '../components/Icons.tsx';
 import SkeletonLoader from '../components/SkeletonLoader.tsx';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+    LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+    XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+} from 'recharts';
 import { useNotification } from '../context/NotificationContext.tsx';
 
 interface AnalyticsViewProps {
     onBack: () => void;
 }
+
+const CHART_COLORS = ['#0D9488', '#6366F1', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316', '#84CC16'];
+
+const StatTile: React.FC<{ label: string; value: string; change: number; inverse?: boolean }> = ({ label, value, change, inverse }) => {
+    const isGood = inverse ? change < 0 : change > 0;
+    return (
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{value}</p>
+            <span className={`text-xs font-medium ${isGood ? 'text-teal-600 dark:text-teal-400' : 'text-red-500'}`}>
+                {change > 0 ? '↑' : '↓'} {Math.abs(change)}% vs last month
+            </span>
+        </div>
+    );
+};
 
 const AnalyticsView: React.FC<AnalyticsViewProps> = ({ onBack }) => {
     const [spendingTrends, setSpendingTrends] = useState<SpendingTrend[]>([]);
@@ -30,11 +48,10 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ onBack }) => {
     const [insights, setInsights] = useState<AnalyticsInsight[]>([]);
     const [predictiveAnalytics, setPredictiveAnalytics] = useState<PredictiveAnalytics | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedTimeframe, setSelectedTimeframe] = useState<'6months' | '12months' | 'ytd'>('6months');
     const { addNotification } = useNotification();
 
     useEffect(() => {
-        const loadAnalyticsData = async () => {
+        const load = async () => {
             setIsLoading(true);
             try {
                 const [trends, categories, comparison, insightsData, predictive] = await Promise.all([
@@ -44,382 +61,189 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ onBack }) => {
                     fetchAnalyticsInsights(),
                     fetchPredictiveAnalytics(),
                 ]);
-                
                 setSpendingTrends(trends);
                 setCategorySpending(categories);
                 setMonthlyComparison(comparison);
                 setInsights(insightsData);
                 setPredictiveAnalytics(predictive);
-            } catch (error) {
-                console.error('Failed to load analytics data:', error);
+            } catch {
                 addNotification('Failed to load analytics data', 'error');
             } finally {
                 setIsLoading(false);
             }
         };
-        
-        loadAnalyticsData();
-    }, [addNotification, selectedTimeframe]);
+        load();
+    }, [addNotification]);
 
-    const handleExportData = () => {
-        addNotification('Export feature coming soon!', 'info');
-        // In a real app, this would export to CSV/PDF
-    };
-
-    const getInsightColor = (type: string) => {
-        switch (type) {
-            case 'success': return 'from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border-green-400';
-            case 'warning': return 'from-orange-50 to-amber-100 dark:from-orange-900/30 dark:to-amber-800/30 border-orange-400';
-            case 'tip': return 'from-blue-50 to-sky-100 dark:from-blue-900/30 dark:to-sky-800/30 border-blue-400';
-            case 'prediction': return 'from-purple-50 to-violet-100 dark:from-purple-900/30 dark:to-violet-800/30 border-purple-400';
-            default: return 'from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border-gray-400';
-        }
+    const insightBorder = (type: string) => {
+        if (type === 'success') return 'border-l-teal-500';
+        if (type === 'warning') return 'border-l-amber-500';
+        if (type === 'tip') return 'border-l-blue-500';
+        if (type === 'prediction') return 'border-l-purple-500';
+        return 'border-l-gray-300';
     };
 
     return (
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 animate-fade-in overflow-y-auto">
-            <div className="max-w-7xl mx-auto">
-                {/* Header */}
-                <button 
-                    onClick={onBack} 
-                    className="mb-4 sm:mb-6 text-sm text-brand-primary hover:underline flex items-center transition-all duration-300 hover:translate-x-1"
-                >
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-gray-900 animate-fade-in overflow-y-auto">
+            <div className="max-w-6xl mx-auto">
+                <button onClick={onBack} className="mb-4 text-sm text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">
                     &larr; Back to Dashboard
                 </button>
-
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
+                <div className="flex items-center justify-between mb-6">
                     <div>
-                        <div className="flex items-center space-x-3 mb-2">
-                            <div className="p-3 bg-gradient-to-br from-brand-primary to-purple-600 rounded-xl shadow-lg animate-pulse-slow">
-                                <ChartBarIcon className="w-8 h-8 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                                    Advanced Analytics
-                                </h1>
-                                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                                    Deep insights into your spending patterns
-                                </p>
-                            </div>
-                        </div>
+                        <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Analytics</h1>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Spending trends, category breakdown & AI insights</p>
                     </div>
-                    
-                    <div className="flex gap-3">
-                        <button
-                            onClick={handleExportData}
-                            className="px-4 py-2 bg-brand-secondary hover:bg-brand-secondary/90 text-white rounded-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
-                        >
-                            📥 Export Data
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => addNotification('Export feature coming soon!', 'info')}
+                        className="text-sm text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-700 px-3 py-1.5 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors"
+                    >
+                        Export
+                    </button>
                 </div>
 
-                {/* Monthly Comparison Cards */}
+                {/* KPI Tiles */}
                 {isLoading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6">
-                        <SkeletonLoader className="h-32 w-full rounded-xl" />
-                        <SkeletonLoader className="h-32 w-full rounded-xl" />
-                        <SkeletonLoader className="h-32 w-full rounded-xl" />
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        {[1,2,3].map(n => <SkeletonLoader key={n} className="h-24 rounded-xl" />)}
                     </div>
                 ) : monthlyComparison && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6">
-                        {/* Spending Comparison */}
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-2xl">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Total Spending</h3>
-                                {monthlyComparison.percentageChange.spending < 0 ? (
-                                    <TrendingDownIcon className="w-5 h-5 text-green-500 animate-bounce-slow" />
-                                ) : (
-                                    <TrendingUpIcon className="w-5 h-5 text-red-500 animate-bounce-slow" />
-                                )}
-                            </div>
-                            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                                {formatCurrency(monthlyComparison.currentMonth.spending)}
-                            </div>
-                            <div className={`text-sm font-medium ${monthlyComparison.percentageChange.spending < 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                                {monthlyComparison.percentageChange.spending > 0 ? '+' : ''}{monthlyComparison.percentageChange.spending}% from last month
-                            </div>
-                        </div>
-
-                        {/* Savings Comparison */}
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-2xl">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Total Savings</h3>
-                                {monthlyComparison.percentageChange.savings > 0 ? (
-                                    <TrendingUpIcon className="w-5 h-5 text-green-500 animate-bounce-slow" />
-                                ) : (
-                                    <TrendingDownIcon className="w-5 h-5 text-red-500 animate-bounce-slow" />
-                                )}
-                            </div>
-                            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                                {formatCurrency(monthlyComparison.currentMonth.savings)}
-                            </div>
-                            <div className={`text-sm font-medium ${monthlyComparison.percentageChange.savings > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                                {monthlyComparison.percentageChange.savings > 0 ? '+' : ''}{monthlyComparison.percentageChange.savings}% from last month
-                            </div>
-                        </div>
-
-                        {/* Transactions Comparison */}
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-2xl">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Transactions</h3>
-                                {monthlyComparison.percentageChange.transactions > 0 ? (
-                                    <TrendingUpIcon className="w-5 h-5 text-blue-500 animate-bounce-slow" />
-                                ) : (
-                                    <TrendingDownIcon className="w-5 h-5 text-blue-500 animate-bounce-slow" />
-                                )}
-                            </div>
-                            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                                {monthlyComparison.currentMonth.transactions}
-                            </div>
-                            <div className={`text-sm font-medium text-blue-600 dark:text-blue-400`}>
-                                {monthlyComparison.percentageChange.transactions > 0 ? '+' : ''}{monthlyComparison.percentageChange.transactions}% from last month
-                            </div>
-                        </div>
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <StatTile
+                            label="This Month Spending"
+                            value={formatCurrency(monthlyComparison.currentMonth.spending)}
+                            change={monthlyComparison.percentageChange.spending}
+                            inverse
+                        />
+                        <StatTile
+                            label="This Month Savings"
+                            value={formatCurrency(monthlyComparison.currentMonth.savings)}
+                            change={monthlyComparison.percentageChange.savings}
+                        />
+                        <StatTile
+                            label="Transactions"
+                            value={monthlyComparison.currentMonth.transactions.toString()}
+                            change={monthlyComparison.percentageChange.transactions}
+                        />
                     </div>
                 )}
 
-                {/* Charts Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    {/* Spending Trends Chart */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <SparklesIcon className="w-5 h-5 mr-2 text-brand-primary" />
-                            Spending & Savings Trends
-                        </h3>
-                        {isLoading ? (
-                            <SkeletonLoader className="h-80 w-full rounded-lg" />
-                        ) : (
-                            <ResponsiveContainer width="100%" height={300}>
-                                <LineChart data={spendingTrends}>
-                                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                                    <XAxis dataKey="month" className="text-xs" />
-                                    <YAxis className="text-xs" />
-                                    <Tooltip 
-                                        contentStyle={{ 
-                                            backgroundColor: 'rgba(0,0,0,0.8)', 
-                                            border: 'none', 
-                                            borderRadius: '8px',
-                                            color: 'white'
-                                        }}
-                                    />
-                                    <Legend />
-                                    <Line 
-                                        type="monotone" 
-                                        dataKey="spending" 
-                                        stroke="#3B82F6" 
-                                        strokeWidth={3}
-                                        dot={{ fill: '#3B82F6', r: 5 }}
-                                        activeDot={{ r: 8 }}
-                                        name="Spending ($)"
-                                    />
-                                    <Line 
-                                        type="monotone" 
-                                        dataKey="savings" 
-                                        stroke="#10B981" 
-                                        strokeWidth={3}
-                                        dot={{ fill: '#10B981', r: 5 }}
-                                        activeDot={{ r: 8 }}
-                                        name="Savings ($)"
-                                    />
-                                </LineChart>
-                            </ResponsiveContainer>
+                {/* Spending Trends Chart */}
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-5 mb-4">
+                    <div className="flex items-center gap-2 mb-4">
+                        <ChartBarIcon className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Spending vs Savings</h2>
+                    </div>
+                    {isLoading ? <SkeletonLoader className="h-56 w-full rounded-lg" /> : (
+                        <ResponsiveContainer width="100%" height={220}>
+                            <BarChart data={spendingTrends} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false} />
+                                <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false} tickFormatter={(v: number) => `$${v}`} />
+                                <Tooltip contentStyle={{ fontSize: 12, border: '1px solid #e5e7eb', borderRadius: 8 }} />
+                                <Legend iconType="square" wrapperStyle={{ fontSize: 12 }} />
+                                <Bar dataKey="spending" name="Spending" fill="#6366F1" radius={[4,4,0,0]} />
+                                <Bar dataKey="savings" name="Savings" fill="#0D9488" radius={[4,4,0,0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    )}
+                </div>
+
+                {/* Category Breakdown + Pie */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-5">
+                        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Category Breakdown</h2>
+                        {isLoading ? <SkeletonLoader className="h-48 w-full rounded-lg" /> : (
+                            <div className="space-y-2.5">
+                                {categorySpending.slice(0, 6).map((cat, i) => (
+                                    <div key={cat.category}>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-xs text-gray-600 dark:text-gray-300">{cat.category}</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs font-medium text-gray-900 dark:text-white">{formatCurrency(cat.amount)}</span>
+                                                <span className={`text-xs ${cat.trend === 'up' ? 'text-red-500' : cat.trend === 'down' ? 'text-teal-500' : 'text-gray-400'}`}>
+                                                    {cat.trend === 'up' ? '↑' : cat.trend === 'down' ? '↓' : '–'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
+                                            <div
+                                                className="h-1.5 rounded-full"
+                                                style={{ width: `${cat.percentage}%`, backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
 
-                    {/* Category Spending Pie Chart */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <SparklesIcon className="w-5 h-5 mr-2 text-brand-primary" />
-                            Category Distribution
-                        </h3>
-                        {isLoading ? (
-                            <SkeletonLoader className="h-80 w-full rounded-lg" />
-                        ) : (
-                            <ResponsiveContainer width="100%" height={300}>
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-5">
+                        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Spending Distribution</h2>
+                        {isLoading ? <SkeletonLoader className="h-48 w-full rounded-lg" /> : (
+                            <ResponsiveContainer width="100%" height={190}>
                                 <PieChart>
                                     <Pie
-                                        data={categorySpending as any}
+                                        data={categorySpending.slice(0, 6)}
+                                        dataKey="amount"
+                                        nameKey="category"
                                         cx="50%"
                                         cy="50%"
-                                        labelLine={false}
-                                        label={({ category, percentage }) => `${category}: ${percentage}%`}
-                                        outerRadius={100}
-                                        fill="#8884d8"
-                                        dataKey="amount"
+                                        innerRadius={50}
+                                        outerRadius={80}
+                                        paddingAngle={2}
                                     >
-                                        {categorySpending.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        {categorySpending.slice(0, 6).map((_, i) => (
+                                            <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                                         ))}
                                     </Pie>
-                                    <Tooltip 
-                                        contentStyle={{ 
-                                            backgroundColor: 'rgba(0,0,0,0.8)', 
-                                            border: 'none', 
-                                            borderRadius: '8px',
-                                            color: 'white'
-                                        }}
-                                        formatter={(value: number) => formatCurrency(value)}
-                                    />
+                                    <Tooltip contentStyle={{ fontSize: 12, border: '1px solid #e5e7eb', borderRadius: 8 }} />
+                                    <Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} />
                                 </PieChart>
                             </ResponsiveContainer>
                         )}
                     </div>
                 </div>
 
-                {/* Category Breakdown Table */}
-                {!isLoading && categorySpending.length > 0 && (
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                            Detailed Category Breakdown
-                        </h3>
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 dark:bg-gray-700">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Category</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Percentage</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Trend</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                                    {categorySpending.map((category, index) => (
-                                        <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                            <td className="px-4 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div 
-                                                        className="w-3 h-3 rounded-full mr-3"
-                                                        style={{ backgroundColor: category.color }}
-                                                    ></div>
-                                                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                                        {category.category}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                                                {formatCurrency(category.amount)}
-                                            </td>
-                                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
-                                                {category.percentage}%
-                                            </td>
-                                            <td className="px-4 py-4 whitespace-nowrap">
-                                                {category.trend === 'up' && (
-                                                    <span className="inline-flex items-center text-red-600 dark:text-red-400 text-sm">
-                                                        <TrendingUpIcon className="w-4 h-4 mr-1" />
-                                                        Rising
-                                                    </span>
-                                                )}
-                                                {category.trend === 'down' && (
-                                                    <span className="inline-flex items-center text-green-600 dark:text-green-400 text-sm">
-                                                        <TrendingDownIcon className="w-4 h-4 mr-1" />
-                                                        Declining
-                                                    </span>
-                                                )}
-                                                {category.trend === 'stable' && (
-                                                    <span className="inline-flex items-center text-gray-600 dark:text-gray-400 text-sm">
-                                                        ➡️ Stable
-                                                    </span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                {/* AI Insights */}
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-5 mb-4">
+                    <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">AI-Powered Insights</h2>
+                    {isLoading ? (
+                        <div className="space-y-2">
+                            {[1,2].map(n => <SkeletonLoader key={n} className="h-16 w-full rounded-lg" />)}
                         </div>
-                    </div>
-                )}
-
-                {/* AI Insights Grid */}
-                {!isLoading && insights.length > 0 && (
-                    <div className="mb-6">
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <SparklesIcon className="w-6 h-6 mr-2 text-brand-primary animate-pulse-slow" />
-                            AI-Powered Insights
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {insights.map((insight) => (
-                                <div
-                                    key={insight.id}
-                                    className={`bg-gradient-to-br ${getInsightColor(insight.type)} border-2 rounded-xl p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-xl`}
-                                >
-                                    <div className="flex items-start space-x-4">
-                                        <div className="text-4xl animate-bounce-slow">{insight.icon}</div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <h4 className="font-bold text-gray-900 dark:text-white">
-                                                    {insight.title}
-                                                </h4>
-                                                <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                                                    insight.impact === 'high' ? 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200' :
-                                                    insight.impact === 'medium' ? 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200' :
-                                                    'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200'
-                                                }`}>
-                                                    {insight.impact}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm text-gray-700 dark:text-gray-300">
-                                                {insight.description}
-                                            </p>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {insights.map(insight => (
+                                <div key={insight.id} className={`border-l-4 ${insightBorder(insight.type)} bg-gray-50 dark:bg-gray-700/40 rounded-r-lg p-3`}>
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-base">{insight.icon}</span>
+                                        <div>
+                                            <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">{insight.title}</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{insight.description}</p>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
 
                 {/* Predictive Analytics */}
                 {!isLoading && predictiveAnalytics && (
-                    <div className="bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-800/30 rounded-xl shadow-lg p-6 border-2 border-purple-400">
-                        <div className="flex items-start space-x-4">
-                            <div className="text-5xl animate-pulse-slow">🔮</div>
+                    <div className="bg-teal-50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-800 rounded-xl p-4 sm:p-5">
+                        <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                                    Predictive Analytics - Next Month Forecast
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Predicted Spending</p>
-                                        <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                                            {formatCurrency(predictiveAnalytics.nextMonthSpending)}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Confidence Level</p>
-                                        <div className="flex items-center">
-                                            <p className="text-3xl font-bold text-gray-900 dark:text-white mr-2">
-                                                {predictiveAnalytics.confidence}%
-                                            </p>
-                                            <div className="flex-1">
-                                                <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-3">
-                                                    <div
-                                                        className="bg-gradient-to-r from-purple-500 to-indigo-500 h-3 rounded-full transition-all duration-1000"
-                                                        style={{ width: `${predictiveAnalytics.confidence}%` }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <TrendingUpIcon className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                                    <h2 className="text-sm font-semibold text-teal-700 dark:text-teal-300">Next Month Forecast</h2>
                                 </div>
-                                <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 mb-3">
-                                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        Prediction Factors:
-                                    </p>
-                                    <ul className="list-disc list-inside space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                                        {predictiveAnalytics.factors.map((factor, index) => (
-                                            <li key={index}>{factor}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                <div className="bg-indigo-100 dark:bg-indigo-900/50 rounded-lg p-4">
-                                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                                        💡 Recommendation:
-                                    </p>
-                                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                                        {predictiveAnalytics.recommendation}
-                                    </p>
-                                </div>
+                                <p className="text-xs text-teal-600 dark:text-teal-400 mb-2">Confidence: {predictiveAnalytics.confidence}%</p>
+                                <p className="text-xs text-teal-700 dark:text-teal-300">{predictiveAnalytics.recommendation}</p>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                                <p className="text-2xl font-bold text-teal-700 dark:text-teal-300">{formatCurrency(predictiveAnalytics.nextMonthSpending)}</p>
+                                <p className="text-xs text-teal-500">predicted</p>
                             </div>
                         </div>
                     </div>
