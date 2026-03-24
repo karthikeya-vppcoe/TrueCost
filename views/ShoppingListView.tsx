@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ShoppingListItem, PriceAlertNotification } from '../types.ts';
 import { fetchShoppingList, fetchPriceAlerts } from '../services/api.ts';
-import { formatINR, formatDate } from '../utils/formatters.ts';
+import { formatINR, formatINRThousands, formatDate } from '../utils/formatters.ts';
 import { useNotification } from '../context/NotificationContext.tsx';
 import SkeletonLoader from '../components/SkeletonLoader.tsx';
 import { BellIcon, TrashIcon, CheckIcon, ChartBarIcon } from '../components/Icons.tsx';
@@ -14,8 +14,11 @@ interface ShoppingListViewProps {
     onBack: () => void;
 }
 
-// Convert API items (USD) to INR representation for Indian context
-const toINR = (usdPrice: number) => Math.round(usdPrice * 84);
+// Approximate USD → INR conversion for mock data that uses USD prices
+const USD_TO_INR = 84;
+
+// Convert mock USD price to INR
+const toINR = (usdPrice: number) => Math.round(usdPrice * USD_TO_INR);
 
 const ShoppingListView: React.FC<ShoppingListViewProps> = ({ onBack }) => {
     const [items, setItems] = useState<ShoppingListItem[]>([]);
@@ -68,10 +71,10 @@ const ShoppingListView: React.FC<ShoppingListViewProps> = ({ onBack }) => {
                 i.id === item.id
                     ? {
                         ...i,
-                        currentPrice: result.lowestPrice / 84, // store as USD equivalent
+                        currentPrice: result.lowestPrice / USD_TO_INR, // store as USD equivalent
                         priceHistory: result.priceHistory.map(p => ({
                             date: p.date,
-                            price: p.price / 84,
+                            price: p.price / USD_TO_INR,
                             merchant: result.merchants[0]?.merchant ?? 'IndiaMart',
                         })),
                     }
@@ -259,7 +262,7 @@ const ShoppingListView: React.FC<ShoppingListViewProps> = ({ onBack }) => {
                                                 <LineChart data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
                                                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                                                     <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#9ca3af' }} tickLine={false} axisLine={false} interval={3} />
-                                                    <YAxis tick={{ fontSize: 9, fill: '#9ca3af' }} tickLine={false} axisLine={false} tickFormatter={(v: number) => `₹${(v / 1000).toFixed(0)}k`} width={36} />
+                                                    <YAxis tick={{ fontSize: 9, fill: '#9ca3af' }} tickLine={false} axisLine={false} tickFormatter={formatINRThousands} width={36} />
                                                     <Tooltip
                                                         formatter={(value: number) => [formatINR(value), 'Price']}
                                                         contentStyle={{ fontSize: 11, border: '1px solid #e5e7eb', borderRadius: 8 }}

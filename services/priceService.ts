@@ -66,7 +66,8 @@ const parseGeminiJSON = <T>(raw: string): T | null => {
     try {
         const cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
         return JSON.parse(cleaned) as T;
-    } catch {
+    } catch (err) {
+        console.warn('priceService: failed to parse Gemini JSON response:', err);
         return null;
     }
 };
@@ -151,7 +152,7 @@ Use REALISTIC current Indian market prices for ${productName}. Prices must be in
             };
         }
     } catch (err) {
-        console.warn('Gemini price fetch failed, using mock data:', err);
+        console.warn(`priceService: Gemini price fetch failed for "${productName}", using mock data:`, err);
     }
 
     // Fallback: realistic mock data for common Indian products
@@ -184,7 +185,7 @@ Use realistic Indian e-commerce coupon codes (e.g. SAVE200, HDFC10, FIRST100). R
             return parsed;
         }
     } catch (err) {
-        console.warn('Gemini coupon fetch failed, using mock data:', err);
+        console.warn(`priceService: Gemini coupon fetch failed for "${merchant}", using fallback coupons:`, err);
     }
 
     // Fallback coupons

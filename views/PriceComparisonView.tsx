@@ -3,7 +3,7 @@ import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { SearchIcon } from '../components/Icons.tsx';
-import { formatINR } from '../utils/formatters.ts';
+import { formatINR, formatINRThousands } from '../utils/formatters.ts';
 import SkeletonLoader from '../components/SkeletonLoader.tsx';
 import { useNotification } from '../context/NotificationContext.tsx';
 import {
@@ -301,7 +301,7 @@ const PriceComparisonView: React.FC<PriceComparisonViewProps> = ({ onBack }) => 
                                             tick={{ fontSize: 10, fill: '#9ca3af' }}
                                             tickLine={false}
                                             axisLine={false}
-                                            tickFormatter={(v: number) => `₹${(v / 1000).toFixed(0)}k`}
+                                            tickFormatter={formatINRThousands}
                                             width={40}
                                         />
                                         <Tooltip

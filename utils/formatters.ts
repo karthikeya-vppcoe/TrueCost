@@ -13,6 +13,14 @@ export const formatCurrency = (amount: number): string => {
 };
 
 /**
+ * Formats a large number (INR) to thousands display for chart Y-axes.
+ * e.g. 12500 -> "₹12k", 1800 -> "₹2k"
+ */
+export const formatINRThousands = (value: number): string => {
+    return `₹${(value / 1000).toFixed(0)}k`;
+};
+
+/**
  * Formats a number as an Indian Rupee string (e.g., ₹1,23,456).
  * @param amount The number to format.
  * @returns A string representing the amount in INR currency format.

@@ -2,29 +2,39 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# TrueCost - Smart Shopping Dashboard
+# TrueCost - Smart Shopping Intelligence
 
-A comprehensive admin and user dashboard for tracking shopping costs, managing product mappings, and monitoring API health across multiple retailers.
+A production-grade fintech shopping intelligence app combining real-time price comparison (like an improved Buyhatke.com) with hidden-fee transparency. Compare live prices across Amazon.in, Flipkart, Croma & IndiaMart – powered by Gemini AI.
 
 ## Features
 
 - 🎯 **Dual Role System**: Separate interfaces for admins and users
-- 📊 **Interactive Dashboards**: Real-time data visualization with charts and analytics
-- 🌍 **Global Activity Map**: Visual representation of API activity worldwide
-- 🌙 **Dark Mode**: Full dark mode support with theme toggle
-- 📱 **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
-- 🔒 **Form Validation**: Built-in validation for user inputs
-- 🔔 **Notifications**: Toast notifications for user feedback
-- 💰 **Savings Tracking**: Monitor and visualize shopping savings over time
-- 🎨 **Modern UI**: Clean, professional interface with smooth animations
+- 💸 **Real-time Price Intelligence**: Live prices from Amazon.in, Flipkart, Croma & IndiaMart via Gemini AI simulation
+- 🎟️ **Auto-detect Coupons**: Gemini AI finds 2-3 working coupon codes for any merchant
+- 📈 **30-Day Price History**: Line chart tracking price trends for any product
+- ⚠️ **Hidden Fee Detection**: Identifies and surfaces convenience/platform fees at checkout
+- 🛒 **Smart Shopping List**: Track items, set target prices, get price drop alerts
+- 📊 **Advanced Analytics**: Spending trends, category breakdown, AI-powered insights & forecasts
+- 🌙 **Dark Mode**: Full dark/light mode support
+- 📱 **Responsive Design**: Works on desktop, tablet, and mobile
+- 🏆 **Savings Milestones & Rewards**: Gamification to encourage smart shopping
+- 🔔 **Toast Notifications**: Real-time feedback for user actions
+
+## Real-time Price Intelligence (powered by Gemini + IndiaMart simulation)
+
+Search any product (e.g. "Wireless Headphones", "Smart Watch", "Laptop") to get:
+- Live prices from **Amazon.in**, **Flipkart**, **Croma**, and **IndiaMart (Wholesale)**
+- Savings percentage comparison across retailers  
+- 30-day price history chart  
+- Auto-detected coupon codes per merchant
 
 ## Tech Stack
 
 - **Frontend**: React 19.2.0 with TypeScript
 - **Build Tool**: Vite 6.2.0
 - **Charts**: Recharts 3.3.0
-- **AI Integration**: Google Gemini AI 1.27.0
-- **Styling**: TailwindCSS (via CDN)
+- **AI Integration**: Google Gemini AI 1.27.0 (price data + coupons)
+- **Styling**: TailwindCSS (via CDN) – clean fintech design (teal #0D9488 accent)
 
 ## Run Locally
 
