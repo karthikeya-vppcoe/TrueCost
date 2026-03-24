@@ -1,14 +1,16 @@
 // utils/formatters.ts
 
 /**
- * Formats a number as a currency string (e.g., $1,234.56).
+ * Formats a number as an Indian Rupee currency string (e.g., ₹1,23,456).
+ * Alias of formatINR for backward compatibility.
  * @param amount The number to format.
- * @returns A string representing the amount in USD currency format.
+ * @returns A string representing the amount in INR currency format.
  */
 export const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'INR',
+        maximumFractionDigits: 0,
     }).format(amount);
 };
 

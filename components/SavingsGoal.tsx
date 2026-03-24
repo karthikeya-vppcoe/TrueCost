@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import EditGoalModal from './EditGoalModal.tsx';
 import SkeletonLoader from './SkeletonLoader.tsx';
 import { PiggyBankIcon } from './Icons.tsx';
+import { formatINR } from '../utils/formatters.ts';
 
 interface SavingsGoalProps {
     currentAmount: number;
@@ -41,7 +42,7 @@ const SavingsGoal: React.FC<SavingsGoalProps> = ({ currentAmount, goalAmount, on
                             ></div>
                         </div>
                         <p className="text-right text-sm text-gray-600 dark:text-gray-400">
-                            <span className="font-bold text-gray-800 dark:text-white">${currentAmount.toFixed(2)}</span> / ${goalAmount.toFixed(2)}
+                            <span className="font-bold text-gray-800 dark:text-white">{formatINR(currentAmount)}</span> / {formatINR(goalAmount)}
                         </p>
                     </>
                 )}

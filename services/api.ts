@@ -60,10 +60,10 @@ export const fetchUserData = async (): Promise<{ savings: UserSavings; activity:
     await delay(600);
     return {
         savings: {
-            totalSavings: 142.75,
-            averageSavings: 8.92,
+            totalSavings: 14275,
+            averageSavings: 892,
             risksDetected: 3,
-            savingsGoal: 250,
+            savingsGoal: 25000,
         },
         activity: Array.from({ length: 15 }, (_, i) => {
             const date = new Date();
@@ -71,9 +71,9 @@ export const fetchUserData = async (): Promise<{ savings: UserSavings; activity:
             return {
                 id: `checkout-${i + 1}`,
                 date: date.toISOString(),
-                merchant: ['Walmart', 'Target', 'Amazon', 'BestBuy', 'Costco'][i % 5],
+                merchant: ['Amazon.in', 'Flipkart', 'Croma', 'IndiaMart', 'Myntra'][i % 5],
                 items: Math.floor(Math.random() * 10) + 1,
-                savings: parseFloat((Math.random() * (15 - 2) + 2).toFixed(2)),
+                savings: parseFloat((Math.random() * (1500 - 200) + 200).toFixed(0)),
             };
         }),
     };
@@ -86,18 +86,18 @@ export const fetchCheckoutDetail = async (id: string): Promise<DetailedCheckout>
         id: `item-${i}`,
         name: `Product ${String.fromCharCode(65 + i)}`,
         quantity: Math.floor(Math.random() * 3) + 1,
-        price: parseFloat((Math.random() * 20 + 1).toFixed(2)),
+        price: parseFloat((Math.random() * 2000 + 100).toFixed(0)),
     }));
     const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const tax = subtotal * 0.08;
-    const shipping = 5.99;
+    const tax = subtotal * 0.18;
+    const shipping = 49;
     const total = subtotal + tax + shipping;
-    const savings = parseFloat((total * 0.15).toFixed(2)); // ~15% savings
+    const savings = parseFloat((total * 0.15).toFixed(0)); // ~15% savings
 
     return {
         id,
         date: new Date().toISOString(),
-        merchant: 'Target',
+        merchant: 'Flipkart',
         items,
         subtotal,
         tax,
@@ -115,11 +115,11 @@ export const fetchSubscriptions = async (): Promise<Subscription[]> => {
     await delay(750);
     const today = new Date();
     return [
-        { id: 'sub-1', name: 'Netflix Premium', amount: 19.99, cycle: 'monthly', nextPaymentDate: new Date(today.getFullYear(), today.getMonth(), 28).toISOString() },
-        { id: 'sub-2', name: 'Spotify Family', amount: 16.99, cycle: 'monthly', nextPaymentDate: new Date(today.getFullYear(), today.getMonth(), 15).toISOString() },
-        { id: 'sub-3', name: 'Amazon Prime', amount: 139.00, cycle: 'yearly', nextPaymentDate: new Date(today.getFullYear(), 8, 5).toISOString() },
-        { id: 'sub-4', name: 'Cloud Storage 2TB', amount: 9.99, cycle: 'monthly', nextPaymentDate: new Date(today.getFullYear(), today.getMonth() + 1, 2).toISOString() },
-        { id: 'sub-5', name: 'Gym Membership', amount: 45.50, cycle: 'monthly', nextPaymentDate: new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString() },
+        { id: 'sub-1', name: 'Netflix Premium', amount: 649, cycle: 'monthly', nextPaymentDate: new Date(today.getFullYear(), today.getMonth(), 28).toISOString() },
+        { id: 'sub-2', name: 'Spotify Premium', amount: 119, cycle: 'monthly', nextPaymentDate: new Date(today.getFullYear(), today.getMonth(), 15).toISOString() },
+        { id: 'sub-3', name: 'Amazon Prime', amount: 1499, cycle: 'yearly', nextPaymentDate: new Date(today.getFullYear(), 8, 5).toISOString() },
+        { id: 'sub-4', name: 'Google One 100GB', amount: 130, cycle: 'monthly', nextPaymentDate: new Date(today.getFullYear(), today.getMonth() + 1, 2).toISOString() },
+        { id: 'sub-5', name: 'Gym Membership', amount: 1999, cycle: 'monthly', nextPaymentDate: new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString() },
     ];
 };
 
@@ -132,13 +132,13 @@ export const fetchSpendingTrends = async (): Promise<import('../types.ts').Spend
     
     for (let i = 5; i >= 0; i--) {
         const monthIndex = (currentMonth - i + 12) % 12;
-        const baseSpending = 300 + Math.random() * 200;
+        const baseSpending = 30000 + Math.random() * 20000;
         const baseSavings = baseSpending * (0.1 + Math.random() * 0.1);
         
         trends.push({
             month: months[monthIndex],
-            spending: parseFloat(baseSpending.toFixed(2)),
-            savings: parseFloat(baseSavings.toFixed(2)),
+            spending: parseFloat(baseSpending.toFixed(0)),
+            savings: parseFloat(baseSavings.toFixed(0)),
             transactions: Math.floor(10 + Math.random() * 10),
         });
     }
@@ -148,14 +148,14 @@ export const fetchSpendingTrends = async (): Promise<import('../types.ts').Spend
 export const fetchCategorySpending = async (): Promise<import('../types.ts').CategorySpending[]> => {
     await delay(600);
     const categories = [
-        { category: 'Groceries', amount: 245.30, color: '#10B981', trend: 'stable' as const },
-        { category: 'Electronics', amount: 185.50, color: '#3B82F6', trend: 'down' as const },
-        { category: 'Dining Out', amount: 156.75, color: '#F59E0B', trend: 'up' as const },
-        { category: 'Household', amount: 124.65, color: '#8B5CF6', trend: 'stable' as const },
-        { category: 'Entertainment', amount: 89.99, color: '#EC4899', trend: 'up' as const },
-        { category: 'Healthcare', amount: 78.45, color: '#06B6D4', trend: 'down' as const },
-        { category: 'Transportation', amount: 67.80, color: '#F97316', trend: 'stable' as const },
-        { category: 'Personal Care', amount: 45.20, color: '#84CC16', trend: 'down' as const },
+        { category: 'Groceries', amount: 24530, color: '#10B981', trend: 'stable' as const },
+        { category: 'Electronics', amount: 18550, color: '#3B82F6', trend: 'down' as const },
+        { category: 'Dining Out', amount: 15675, color: '#F59E0B', trend: 'up' as const },
+        { category: 'Household', amount: 12465, color: '#8B5CF6', trend: 'stable' as const },
+        { category: 'Entertainment', amount: 8999, color: '#EC4899', trend: 'up' as const },
+        { category: 'Healthcare', amount: 7845, color: '#06B6D4', trend: 'down' as const },
+        { category: 'Transportation', amount: 6780, color: '#F97316', trend: 'stable' as const },
+        { category: 'Personal Care', amount: 4520, color: '#84CC16', trend: 'down' as const },
     ];
     
     const total = categories.reduce((sum, cat) => sum + cat.amount, 0);
@@ -168,13 +168,13 @@ export const fetchCategorySpending = async (): Promise<import('../types.ts').Cat
 export const fetchMonthlyComparison = async (): Promise<import('../types.ts').MonthlyComparison> => {
     await delay(500);
     const current = {
-        spending: 993.64,
-        savings: 142.75,
+        spending: 99364,
+        savings: 14275,
         transactions: 15,
     };
     const previous = {
-        spending: 1087.32,
-        savings: 128.45,
+        spending: 108732,
+        savings: 12845,
         transactions: 18,
     };
     
@@ -212,7 +212,7 @@ export const fetchAnalyticsInsights = async (): Promise<import('../types.ts').An
             id: '3',
             type: 'tip',
             title: 'Bulk Purchase Opportunity',
-            description: 'Based on your grocery patterns, buying in bulk could save you $25-30 monthly.',
+            description: 'Based on your grocery patterns, buying in bulk could save you ₹2,500-3,000 monthly.',
             impact: 'medium',
             icon: '💡',
         },
@@ -220,7 +220,7 @@ export const fetchAnalyticsInsights = async (): Promise<import('../types.ts').An
             id: '4',
             type: 'prediction',
             title: 'Next Month Forecast',
-            description: 'Your predicted spending for next month is $950-1050 based on current trends.',
+            description: 'Your predicted spending for next month is ₹95,000-1,05,000 based on current trends.',
             impact: 'low',
             icon: '📈',
         },
@@ -230,7 +230,7 @@ export const fetchAnalyticsInsights = async (): Promise<import('../types.ts').An
 export const fetchPredictiveAnalytics = async (): Promise<import('../types.ts').PredictiveAnalytics> => {
     await delay(1000);
     return {
-        nextMonthSpending: 1024.50,
+        nextMonthSpending: 102450,
         confidence: 87,
         factors: [
             'Historical spending patterns',
@@ -238,7 +238,7 @@ export const fetchPredictiveAnalytics = async (): Promise<import('../types.ts').
             'Upcoming subscription renewals',
             'Current budget utilization',
         ],
-        recommendation: 'Based on your spending patterns, we recommend setting aside $1,100 for next month to maintain your savings goals while accommodating typical expenses.',
+        recommendation: 'Based on your spending patterns, we recommend setting aside ₹1,10,000 for next month to maintain your savings goals while accommodating typical expenses.',
     };
 };
 
@@ -252,106 +252,106 @@ export const fetchShoppingList = async (): Promise<import('../types.ts').Shoppin
             id: 'item-1',
             name: 'Sony WH-1000XM5 Wireless Headphones',
             category: 'Electronics',
-            targetPrice: 349.99,
-            currentPrice: 398.00,
-            merchant: 'Amazon',
+            targetPrice: 24999,
+            currentPrice: 29999,
+            merchant: 'Amazon.in',
             addedDate: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-            notes: 'Waiting for Black Friday sale',
+            notes: 'Waiting for Big Billion Days sale',
             priority: 'high',
             priceAlert: true,
             priceHistory: [
-                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 398.00, merchant: 'Amazon' },
-                { date: new Date(today.getTime() - 23 * 24 * 60 * 60 * 1000).toISOString(), price: 379.99, merchant: 'Amazon' },
-                { date: new Date(today.getTime() - 16 * 24 * 60 * 60 * 1000).toISOString(), price: 389.00, merchant: 'Amazon' },
-                { date: new Date(today.getTime() - 9 * 24 * 60 * 60 * 1000).toISOString(), price: 375.50, merchant: 'Amazon' },
-                { date: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(), price: 398.00, merchant: 'Amazon' },
+                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 29999, merchant: 'Amazon.in' },
+                { date: new Date(today.getTime() - 23 * 24 * 60 * 60 * 1000).toISOString(), price: 27999, merchant: 'Amazon.in' },
+                { date: new Date(today.getTime() - 16 * 24 * 60 * 60 * 1000).toISOString(), price: 28499, merchant: 'Amazon.in' },
+                { date: new Date(today.getTime() - 9 * 24 * 60 * 60 * 1000).toISOString(), price: 26999, merchant: 'Amazon.in' },
+                { date: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(), price: 29999, merchant: 'Amazon.in' },
             ],
         },
         {
             id: 'item-2',
-            name: 'KitchenAid Stand Mixer',
+            name: 'Bosch Stand Mixer MUM5',
             category: 'Appliances',
-            targetPrice: 299.00,
-            currentPrice: 279.99,
-            merchant: 'Target',
+            targetPrice: 18999,
+            currentPrice: 16999,
+            merchant: 'Croma',
             addedDate: new Date(today.getTime() - 12 * 24 * 60 * 60 * 1000).toISOString(),
-            notes: 'Target has best price currently',
+            notes: 'Croma has best price currently',
             priority: 'medium',
             priceAlert: true,
             priceHistory: [
-                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 349.99, merchant: 'Target' },
-                { date: new Date(today.getTime() - 20 * 24 * 60 * 60 * 1000).toISOString(), price: 329.99, merchant: 'Target' },
-                { date: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString(), price: 299.99, merchant: 'Target' },
-                { date: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString(), price: 289.99, merchant: 'Target' },
-                { date: today.toISOString(), price: 279.99, merchant: 'Target' },
+                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 22999, merchant: 'Croma' },
+                { date: new Date(today.getTime() - 20 * 24 * 60 * 60 * 1000).toISOString(), price: 20999, merchant: 'Croma' },
+                { date: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString(), price: 18999, merchant: 'Croma' },
+                { date: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString(), price: 17499, merchant: 'Croma' },
+                { date: today.toISOString(), price: 16999, merchant: 'Croma' },
             ],
         },
         {
             id: 'item-3',
-            name: 'Dyson V15 Cordless Vacuum',
+            name: 'Dyson V11 Absolute Vacuum',
             category: 'Home & Garden',
-            targetPrice: 549.99,
-            currentPrice: 649.99,
-            merchant: 'Best Buy',
+            targetPrice: 38999,
+            currentPrice: 44999,
+            merchant: 'Flipkart',
             addedDate: new Date(today.getTime() - 8 * 24 * 60 * 60 * 1000).toISOString(),
             priority: 'high',
             priceAlert: true,
             priceHistory: [
-                { date: new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000).toISOString(), price: 699.99, merchant: 'Best Buy' },
-                { date: new Date(today.getTime() - 21 * 24 * 60 * 60 * 1000).toISOString(), price: 679.99, merchant: 'Best Buy' },
-                { date: new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString(), price: 659.99, merchant: 'Best Buy' },
-                { date: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(), price: 649.99, merchant: 'Best Buy' },
+                { date: new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000).toISOString(), price: 49999, merchant: 'Flipkart' },
+                { date: new Date(today.getTime() - 21 * 24 * 60 * 60 * 1000).toISOString(), price: 47999, merchant: 'Flipkart' },
+                { date: new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString(), price: 45999, merchant: 'Flipkart' },
+                { date: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(), price: 44999, merchant: 'Flipkart' },
             ],
         },
         {
             id: 'item-4',
             name: 'Nintendo Switch OLED',
             category: 'Gaming',
-            targetPrice: 319.99,
-            currentPrice: 299.99,
-            merchant: 'Walmart',
+            targetPrice: 27999,
+            currentPrice: 24999,
+            merchant: 'IndiaMart',
             addedDate: new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString(),
             notes: 'Price dropped! Ready to buy',
             priority: 'low',
             priceAlert: false,
             priceHistory: [
-                { date: new Date(today.getTime() - 25 * 24 * 60 * 60 * 1000).toISOString(), price: 349.99, merchant: 'Walmart' },
-                { date: new Date(today.getTime() - 18 * 24 * 60 * 60 * 1000).toISOString(), price: 329.99, merchant: 'Walmart' },
-                { date: new Date(today.getTime() - 11 * 24 * 60 * 60 * 1000).toISOString(), price: 319.99, merchant: 'Walmart' },
-                { date: new Date(today.getTime() - 4 * 24 * 60 * 60 * 1000).toISOString(), price: 309.99, merchant: 'Walmart' },
-                { date: today.toISOString(), price: 299.99, merchant: 'Walmart' },
+                { date: new Date(today.getTime() - 25 * 24 * 60 * 60 * 1000).toISOString(), price: 29999, merchant: 'IndiaMart' },
+                { date: new Date(today.getTime() - 18 * 24 * 60 * 60 * 1000).toISOString(), price: 27999, merchant: 'IndiaMart' },
+                { date: new Date(today.getTime() - 11 * 24 * 60 * 60 * 1000).toISOString(), price: 26499, merchant: 'IndiaMart' },
+                { date: new Date(today.getTime() - 4 * 24 * 60 * 60 * 1000).toISOString(), price: 25499, merchant: 'IndiaMart' },
+                { date: today.toISOString(), price: 24999, merchant: 'IndiaMart' },
             ],
         },
         {
             id: 'item-5',
-            name: 'Instant Pot Duo Plus 8Qt',
+            name: 'Prestige Induction Cooktop',
             category: 'Kitchen',
-            targetPrice: 99.99,
-            currentPrice: 119.95,
-            merchant: 'Amazon',
+            targetPrice: 2999,
+            currentPrice: 3499,
+            merchant: 'Amazon.in',
             addedDate: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString(),
             priority: 'medium',
             priceAlert: true,
             priceHistory: [
-                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 129.99, merchant: 'Amazon' },
-                { date: new Date(today.getTime() - 22 * 24 * 60 * 60 * 1000).toISOString(), price: 124.95, merchant: 'Amazon' },
-                { date: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString(), price: 119.95, merchant: 'Amazon' },
+                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 3999, merchant: 'Amazon.in' },
+                { date: new Date(today.getTime() - 22 * 24 * 60 * 60 * 1000).toISOString(), price: 3699, merchant: 'Amazon.in' },
+                { date: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString(), price: 3499, merchant: 'Amazon.in' },
             ],
         },
         {
             id: 'item-6',
             name: 'Apple AirPods Pro (2nd Gen)',
             category: 'Electronics',
-            targetPrice: 199.99,
-            currentPrice: 249.00,
-            merchant: 'Apple Store',
+            targetPrice: 19999,
+            currentPrice: 24900,
+            merchant: 'Myntra',
             addedDate: new Date(today.getTime() - 20 * 24 * 60 * 60 * 1000).toISOString(),
             notes: 'Checking multiple retailers',
             priority: 'low',
             priceAlert: true,
             priceHistory: [
-                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 249.00, merchant: 'Apple Store' },
-                { date: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString(), price: 249.00, merchant: 'Apple Store' },
+                { date: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(), price: 24900, merchant: 'Myntra' },
+                { date: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString(), price: 24900, merchant: 'Myntra' },
             ],
         },
     ];
@@ -364,26 +364,26 @@ export const fetchPriceAlerts = async (): Promise<import('../types.ts').PriceAle
     return [
         {
             id: 'alert-1',
-            itemName: 'KitchenAid Stand Mixer',
-            oldPrice: 349.99,
-            newPrice: 279.99,
-            merchant: 'Target',
+            itemName: 'Bosch Stand Mixer MUM5',
+            oldPrice: 22999,
+            newPrice: 16999,
+            merchant: 'Croma',
             timestamp: new Date(today.getTime() - 2 * 60 * 60 * 1000).toISOString(),
         },
         {
             id: 'alert-2',
             itemName: 'Nintendo Switch OLED',
-            oldPrice: 349.99,
-            newPrice: 299.99,
-            merchant: 'Walmart',
+            oldPrice: 29999,
+            newPrice: 24999,
+            merchant: 'IndiaMart',
             timestamp: new Date(today.getTime() - 5 * 60 * 60 * 1000).toISOString(),
         },
         {
             id: 'alert-3',
-            itemName: 'Dyson V15 Cordless Vacuum',
-            oldPrice: 699.99,
-            newPrice: 649.99,
-            merchant: 'Best Buy',
+            itemName: 'Dyson V11 Absolute Vacuum',
+            oldPrice: 49999,
+            newPrice: 44999,
+            merchant: 'Flipkart',
             timestamp: new Date(today.getTime() - 24 * 60 * 60 * 1000).toISOString(),
         },
     ];

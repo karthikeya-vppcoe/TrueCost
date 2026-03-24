@@ -142,7 +142,7 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                         <DashboardCard
                             title="Total Savings"
                             value={savings?.totalSavings || 0}
-                            prefix="$"
+                            prefix="₹"
                             icon={<PiggyBankIcon className="h-5 w-5" />}
                             colorClass="bg-teal-600"
                             isLoading={isLoading}
@@ -216,13 +216,13 @@ const UserDashboardView: React.FC<UserDashboardViewProps> = ({ user, onNavigate 
                                 <SkeletonLoader className="h-72 w-full rounded-xl" />
                             ) : (
                                 <BudgetInsights
-                                    totalSpent={320.45}
-                                    monthlyBudget={500}
+                                    totalSpent={32045}
+                                    monthlyBudget={50000}
                                     topCategories={[
-                                        { name: 'Groceries', amount: 145.30, color: '#0D9488' },
-                                        { name: 'Electronics', amount: 85.50, color: '#6366F1' },
-                                        { name: 'Household', amount: 54.65, color: '#F59E0B' },
-                                        { name: 'Personal Care', amount: 35.00, color: '#8B5CF6' }
+                                        { name: 'Groceries', amount: 14530, color: '#0D9488' },
+                                        { name: 'Electronics', amount: 8550, color: '#6366F1' },
+                                        { name: 'Household', amount: 5465, color: '#F59E0B' },
+                                        { name: 'Personal Care', amount: 3500, color: '#8B5CF6' }
                                     ]}
                                 />
                             )}

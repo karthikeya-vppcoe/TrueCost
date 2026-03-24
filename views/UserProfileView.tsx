@@ -170,7 +170,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onBack, onUpdat
                         <DashboardCard 
                             title="Total Savings"
                             value={savings?.totalSavings || 0}
-                            prefix="$"
+                            prefix="₹"
                             icon={<PiggyBankIcon className="h-6 w-6 text-white" />}
                             colorClass="bg-teal-600"
                             isLoading={isLoading}
@@ -178,7 +178,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onBack, onUpdat
                         <DashboardCard 
                             title="Average Savings / Checkout"
                             value={savings?.averageSavings || 0}
-                            prefix="$"
+                            prefix="₹"
                             icon={<PiggyBankIcon className="h-6 w-6 text-white" />}
                             colorClass="bg-indigo-500"
                             isLoading={isLoading}

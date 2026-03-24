@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChartPieIcon } from './Icons.tsx';
+import { formatINR } from '../utils/formatters.ts';
 
 interface BudgetInsightsProps {
   totalSpent: number;
@@ -67,12 +68,12 @@ const BudgetInsights: React.FC<BudgetInsightsProps> = ({ totalSpent, monthlyBudg
       <div className="space-y-2">
         <div className="flex justify-between items-end">
           <div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">${totalSpent.toFixed(2)}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">of ${monthlyBudget.toFixed(2)} budget</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatINR(totalSpent)}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">of {formatINR(monthlyBudget)} budget</p>
           </div>
           <div className="text-right">
             <p className={`text-base font-semibold ${remaining >= 0 ? 'text-teal-600 dark:text-teal-400' : 'text-red-500'}`}>
-              ${Math.abs(remaining).toFixed(2)}
+              {formatINR(Math.abs(remaining))}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">{remaining >= 0 ? 'remaining' : 'over budget'}</p>
           </div>
@@ -100,7 +101,7 @@ const BudgetInsights: React.FC<BudgetInsightsProps> = ({ totalSpent, monthlyBudg
               <div key={index} className="space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-700 dark:text-gray-300">{category.name}</span>
-                  <span className="font-medium text-gray-900 dark:text-white">${category.amount.toFixed(2)}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{formatINR(category.amount)}</span>
                 </div>
                 <div className="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                   <div className="h-full rounded-full transition-all duration-700" style={{ width: `${categoryPercent}%`, backgroundColor: category.color }} />

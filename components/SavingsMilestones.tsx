@@ -20,51 +20,51 @@ const SavingsMilestones: React.FC<SavingsMilestonesProps> = ({ currentSavings })
     const milestones: Milestone[] = [
         {
             id: '1',
-            amount: 25,
+            amount: 2500,
             title: 'First Steps',
             icon: '🌱',
             color: 'bg-green-500',
-            reached: currentSavings >= 25
+            reached: currentSavings >= 2500
         },
         {
             id: '2',
-            amount: 50,
+            amount: 5000,
             title: 'Getting Started',
             icon: '🚀',
             color: 'bg-blue-500',
-            reached: currentSavings >= 50
+            reached: currentSavings >= 5000
         },
         {
             id: '3',
-            amount: 100,
+            amount: 10000,
             title: 'Century Club',
             icon: '💯',
             color: 'bg-purple-500',
-            reached: currentSavings >= 100
+            reached: currentSavings >= 10000
         },
         {
             id: '4',
-            amount: 250,
+            amount: 25000,
             title: 'Quarter Master',
             icon: '⭐',
             color: 'bg-yellow-500',
-            reached: currentSavings >= 250
+            reached: currentSavings >= 25000
         },
         {
             id: '5',
-            amount: 500,
+            amount: 50000,
             title: 'Half Grand',
             icon: '🏆',
             color: 'bg-orange-500',
-            reached: currentSavings >= 500
+            reached: currentSavings >= 50000
         },
         {
             id: '6',
-            amount: 1000,
+            amount: 100000,
             title: 'Grand Master',
             icon: '👑',
             color: 'bg-red-500',
-            reached: currentSavings >= 1000
+            reached: currentSavings >= 100000
         }
     ];
 
