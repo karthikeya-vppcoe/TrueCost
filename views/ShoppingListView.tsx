@@ -1,428 +1,277 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ShoppingListItem, PriceAlertNotification } from '../types.ts';
 import { fetchShoppingList, fetchPriceAlerts } from '../services/api.ts';
-import { formatCurrency, formatDate } from '../utils/formatters.ts';
+import { formatINR, formatDate } from '../utils/formatters.ts';
 import { useNotification } from '../context/NotificationContext.tsx';
-import { useGSAPStagger } from '../hooks/useGSAPAnimation.ts';
 import SkeletonLoader from '../components/SkeletonLoader.tsx';
-import EmptyState from '../components/EmptyState.tsx';
-import { 
-    ShoppingCartIcon, 
-    PlusIcon, 
-    BellIcon, 
-    TrendingDownIcon,
-    TrendingUpIcon,
-    ChartBarIcon,
-    TrashIcon,
-    CheckIcon
-} from '../components/Icons.tsx';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BellIcon, TrashIcon, CheckIcon, ChartBarIcon } from '../components/Icons.tsx';
+import { fetchIndianPrices } from '../services/priceService.ts';
+import {
+    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+} from 'recharts';
 
 interface ShoppingListViewProps {
     onBack: () => void;
 }
 
+// Convert API items (USD) to INR representation for Indian context
+const toINR = (usdPrice: number) => Math.round(usdPrice * 84);
+
 const ShoppingListView: React.FC<ShoppingListViewProps> = ({ onBack }) => {
     const [items, setItems] = useState<ShoppingListItem[]>([]);
     const [alerts, setAlerts] = useState<PriceAlertNotification[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [selectedItem, setSelectedItem] = useState<ShoppingListItem | null>(null);
     const [filter, setFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+    const [trackingItemId, setTrackingItemId] = useState<string | null>(null);
+    const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
     const { addNotification } = useNotification();
 
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         setIsLoading(true);
         try {
             const [listData, alertsData] = await Promise.all([
                 fetchShoppingList(),
-                fetchPriceAlerts()
+                fetchPriceAlerts(),
             ]);
             setItems(listData);
             setAlerts(alertsData);
-        } catch (error) {
-            console.error('Failed to load shopping list:', error);
+        } catch {
             addNotification('Failed to load shopping list', 'error');
         } finally {
             setIsLoading(false);
         }
+    }, [addNotification]);
+
+    useEffect(() => { loadData(); }, [loadData]);
+
+    const handleDelete = (id: string) => {
+        setItems(prev => prev.filter(i => i.id !== id));
+        addNotification('Item removed', 'success');
     };
 
-    const handleDeleteItem = (itemId: string) => {
-        setItems(items.filter(item => item.id !== itemId));
-        addNotification('Item removed from shopping list', 'success');
+    const handlePurchased = (id: string) => {
+        setItems(prev => prev.filter(i => i.id !== id));
+        addNotification('Marked as purchased!', 'success');
     };
 
-    const handleMarkAsPurchased = (itemId: string) => {
-        setItems(items.filter(item => item.id !== itemId));
-        addNotification('Item marked as purchased!', 'success');
-    };
-
-    const handleTogglePriceAlert = (itemId: string) => {
-        setItems(items.map(item => 
-            item.id === itemId 
-                ? { ...item, priceAlert: !item.priceAlert }
-                : item
-        ));
+    const handleToggleAlert = (id: string) => {
+        setItems(prev => prev.map(i => i.id === id ? { ...i, priceAlert: !i.priceAlert } : i));
         addNotification('Price alert updated', 'info');
     };
 
-    const filteredItems = filter === 'all' 
-        ? items 
-        : items.filter(item => item.priority === filter);
-    
-    // GSAP animation for staggered item entrance
-    const itemsContainerRef = useGSAPStagger('.shopping-item', { 
-        opacity: 0, 
-        y: 30 
-    }, [filteredItems.length]);
-
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case 'high': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-            case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-            case 'low': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-            default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400';
+    const handleTrackPrice = async (item: ShoppingListItem) => {
+        setTrackingItemId(item.id);
+        try {
+            const result = await fetchIndianPrices(item.name);
+            // Update the item with fresh price history from Gemini
+            setItems(prev => prev.map(i =>
+                i.id === item.id
+                    ? {
+                        ...i,
+                        currentPrice: result.lowestPrice / 84, // store as USD equivalent
+                        priceHistory: result.priceHistory.map(p => ({
+                            date: p.date,
+                            price: p.price / 84,
+                            merchant: result.merchants[0]?.merchant ?? 'IndiaMart',
+                        })),
+                    }
+                    : i
+            ));
+            setExpandedItemId(item.id);
+            addNotification(`Price tracked for ${item.name}! Best: ${formatINR(result.lowestPrice)}`, 'success');
+        } catch {
+            addNotification('Could not fetch live price data', 'error');
+        } finally {
+            setTrackingItemId(null);
         }
     };
 
-    const calculatePotentialSavings = () => {
-        return items.reduce((total, item) => {
-            const savings = item.currentPrice - item.targetPrice;
-            return total + (savings > 0 ? savings : 0);
-        }, 0);
+    const filteredItems = filter === 'all' ? items : items.filter(i => i.priority === filter);
+
+    const potentialSavings = items.reduce((acc, i) => {
+        const diff = toINR(i.currentPrice) - toINR(i.targetPrice);
+        return acc + (diff > 0 ? diff : 0);
+    }, 0);
+
+    const priorityBadge = (p: string) => {
+        if (p === 'high') return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+        if (p === 'medium') return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+        return 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400';
     };
 
     return (
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 animate-fade-in overflow-y-auto">
-            <div className="max-w-7xl mx-auto">
-                {/* Header */}
-                <button 
-                    onClick={onBack} 
-                    className="mb-4 sm:mb-6 text-sm text-brand-primary hover:underline flex items-center transition-all duration-300 hover:translate-x-1"
-                >
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-gray-900 animate-fade-in overflow-y-auto">
+            <div className="max-w-4xl mx-auto">
+                <button onClick={onBack} className="mb-4 text-sm text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">
                     &larr; Back to Dashboard
                 </button>
 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-                    <div>
-                        <div className="flex items-center space-x-3 mb-2">
-                            <div className="p-3 bg-gradient-to-br from-brand-primary to-purple-600 rounded-xl shadow-lg animate-pulse-slow">
-                                <ShoppingCartIcon className="w-8 h-8 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                                    Smart Shopping List
-                                </h1>
-                                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                                    Track prices and get alerts when items go on sale
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={() => setShowAddModal(true)}
-                        className="flex items-center px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
-                    >
-                        <PlusIcon className="w-5 h-5 mr-2" />
-                        Add Item
-                    </button>
+                <div className="mb-5">
+                    <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Shopping List</h1>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Track items, monitor prices & get alerts when price drops</p>
                 </div>
 
                 {/* Price Alerts Banner */}
                 {alerts.length > 0 && (
-                    <div className="mb-6 bg-gradient-to-r from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border border-green-400 rounded-xl p-4 animate-fade-in">
-                        <div className="flex items-start space-x-3">
-                            <BellIcon className="w-6 h-6 text-green-600 dark:text-green-400 animate-bounce" />
-                            <div className="flex-1">
-                                <h3 className="text-lg font-bold text-green-900 dark:text-green-100 mb-2">
-                                    🎉 Price Drop Alerts!
-                                </h3>
-                                <div className="space-y-2">
-                                    {alerts.slice(0, 3).map(alert => (
-                                        <div key={alert.id} className="text-sm text-green-800 dark:text-green-200">
-                                            <span className="font-semibold">{alert.itemName}</span> dropped from{' '}
-                                            <span className="line-through">{formatCurrency(alert.oldPrice)}</span> to{' '}
-                                            <span className="font-bold text-green-600 dark:text-green-400">
-                                                {formatCurrency(alert.newPrice)}
-                                            </span>{' '}
-                                            at {alert.merchant}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                    <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-700 rounded-xl p-3 mb-5">
+                        <p className="text-sm font-medium text-teal-800 dark:text-teal-300 mb-2">�� Recent Price Drops</p>
+                        <div className="flex flex-wrap gap-2">
+                            {alerts.map(a => (
+                                <span key={a.id} className="text-xs bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-400 px-2.5 py-1 rounded-full">
+                                    {a.itemName}: {formatINR(toINR(a.newPrice))}
+                                    <span className="text-teal-500 ml-1">↓ {formatINR(toINR(a.oldPrice - a.newPrice))} off</span>
+                                </span>
+                            ))}
                         </div>
                     </div>
                 )}
 
-                {/* Summary Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:scale-105">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">Total Items</p>
-                                <p className="text-3xl font-bold text-gray-900 dark:text-white">{items.length}</p>
-                            </div>
-                            <ShoppingCartIcon className="w-12 h-12 text-brand-primary opacity-50" />
-                        </div>
+                {/* Summary + Filters */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                    <div className="flex gap-4 text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">{items.length} items tracked</span>
+                        {potentialSavings > 0 && (
+                            <span className="text-teal-600 dark:text-teal-400 font-medium">Potential savings: {formatINR(potentialSavings)}</span>
+                        )}
                     </div>
-
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:scale-105">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">Potential Savings</p>
-                                <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-                                    {formatCurrency(calculatePotentialSavings())}
-                                </p>
-                            </div>
-                            <TrendingDownIcon className="w-12 h-12 text-green-500 opacity-50" />
-                        </div>
-                    </div>
-
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:scale-105">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">Price Alerts</p>
-                                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                                    {items.filter(i => i.priceAlert).length}
-                                </p>
-                            </div>
-                            <BellIcon className="w-12 h-12 text-purple-500 opacity-50" />
-                        </div>
-                    </div>
-
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:scale-105">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">High Priority</p>
-                                <p className="text-3xl font-bold text-red-600 dark:text-red-400">
-                                    {items.filter(i => i.priority === 'high').length}
-                                </p>
-                            </div>
-                            <div className="text-3xl">🔥</div>
-                        </div>
+                    <div className="flex gap-2">
+                        {(['all', 'high', 'medium', 'low'] as const).map(f => (
+                            <button
+                                key={f}
+                                onClick={() => setFilter(f)}
+                                className={`text-xs px-3 py-1.5 rounded-full capitalize transition-colors ${
+                                    filter === f
+                                        ? 'bg-teal-600 text-white'
+                                        : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-teal-400'
+                                }`}
+                            >
+                                {f}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
-                {/* Filters */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                    <button
-                        onClick={() => setFilter('all')}
-                        className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                            filter === 'all'
-                                ? 'bg-brand-primary text-white shadow-lg'
-                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        }`}
-                    >
-                        All Items ({items.length})
-                    </button>
-                    <button
-                        onClick={() => setFilter('high')}
-                        className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                            filter === 'high'
-                                ? 'bg-red-500 text-white shadow-lg'
-                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        }`}
-                    >
-                        High Priority ({items.filter(i => i.priority === 'high').length})
-                    </button>
-                    <button
-                        onClick={() => setFilter('medium')}
-                        className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                            filter === 'medium'
-                                ? 'bg-yellow-500 text-white shadow-lg'
-                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        }`}
-                    >
-                        Medium Priority ({items.filter(i => i.priority === 'medium').length})
-                    </button>
-                    <button
-                        onClick={() => setFilter('low')}
-                        className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                            filter === 'low'
-                                ? 'bg-green-500 text-white shadow-lg'
-                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        }`}
-                    >
-                        Low Priority ({items.filter(i => i.priority === 'low').length})
-                    </button>
-                </div>
-
-                {/* Shopping List Items */}
+                {/* Items */}
                 {isLoading ? (
-                    <div className="space-y-4">
-                        <SkeletonLoader className="h-48 w-full rounded-xl" />
-                        <SkeletonLoader className="h-48 w-full rounded-xl" />
-                        <SkeletonLoader className="h-48 w-full rounded-xl" />
+                    <div className="space-y-3">
+                        {[1, 2, 3].map(n => <SkeletonLoader key={n} className="h-24 w-full rounded-xl" />)}
                     </div>
                 ) : filteredItems.length === 0 ? (
-                    <EmptyState
-                        title="No items in your shopping list"
-                        description="Start adding items to track prices and get alerts when they go on sale"
-                        icon={<ShoppingCartIcon className="w-16 h-16 text-gray-400" />}
-                        actionLabel="Add Your First Item"
-                        onAction={() => setShowAddModal(true)}
-                    />
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-12 text-center">
+                        <p className="text-gray-500 dark:text-gray-400">No items found.</p>
+                    </div>
                 ) : (
-                    <div ref={itemsContainerRef} className="grid grid-cols-1 gap-6">
-                        {filteredItems.map((item) => (
-                            <div
-                                key={item.id}
-                                className="shopping-item bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
-                            >
-                                <div className="flex flex-col lg:flex-row gap-6">
-                                    {/* Item Info */}
-                                    <div className="flex-1">
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                                                        {item.name}
-                                                    </h3>
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getPriorityColor(item.priority)}`}>
-                                                        {item.priority.toUpperCase()}
-                                                    </span>
+                    <div className="space-y-3">
+                        {filteredItems.map(item => {
+                            const currentINR = toINR(item.currentPrice);
+                            const targetINR = toINR(item.targetPrice);
+                            const diff = currentINR - targetINR;
+                            const atTarget = diff <= 0;
+                            const expanded = expandedItemId === item.id;
+                            const chartData = item.priceHistory.map(p => ({
+                                date: p.date.slice(5),
+                                price: toINR(p.price),
+                            }));
+
+                            return (
+                                <div key={item.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+                                    <div className="p-4">
+                                        <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                                            {/* Left: Info */}
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 flex-wrap mb-1">
+                                                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{item.name}</h3>
+                                                    <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${priorityBadge(item.priority)}`}>{item.priority}</span>
+                                                    {atTarget && <span className="text-xs px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400">At Target Price!</span>}
                                                 </div>
-                                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                    {item.category} • Added {formatDate(item.addedDate)}
-                                                </p>
-                                                {item.notes && (
-                                                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-2 italic">
-                                                        {item.notes}
-                                                    </p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">{item.category} · Added {formatDate(item.addedDate)}</p>
+                                                {item.notes && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 italic">{item.notes}</p>}
+                                            </div>
+
+                                            {/* Right: Prices */}
+                                            <div className="flex items-end gap-4 sm:text-right flex-shrink-0">
+                                                <div>
+                                                    <p className="text-xs text-gray-400 mb-0.5">Current</p>
+                                                    <p className={`text-lg font-bold ${atTarget ? 'text-teal-600 dark:text-teal-400' : 'text-gray-900 dark:text-white'}`}>{formatINR(currentINR)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-gray-400 mb-0.5">Target</p>
+                                                    <p className="text-lg font-semibold text-gray-500 dark:text-gray-400">{formatINR(targetINR)}</p>
+                                                </div>
+                                                {!atTarget && (
+                                                    <div>
+                                                        <p className="text-xs text-gray-400 mb-0.5">Gap</p>
+                                                        <p className="text-lg font-semibold text-red-500">{formatINR(diff)}</p>
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                                            <div>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Current Price</p>
-                                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                                                    {formatCurrency(item.currentPrice)}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Target Price</p>
-                                                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                                                    {formatCurrency(item.targetPrice)}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Price Difference</p>
-                                                <p className={`text-2xl font-bold ${
-                                                    item.currentPrice <= item.targetPrice 
-                                                        ? 'text-green-600 dark:text-green-400' 
-                                                        : 'text-red-600 dark:text-red-400'
-                                                }`}>
-                                                    {item.currentPrice <= item.targetPrice ? (
-                                                        <span className="flex items-center">
-                                                            <TrendingDownIcon className="w-6 h-6 mr-1" />
-                                                            {formatCurrency(item.targetPrice - item.currentPrice)}
-                                                        </span>
-                                                    ) : (
-                                                        <span className="flex items-center">
-                                                            <TrendingUpIcon className="w-6 h-6 mr-1" />
-                                                            {formatCurrency(item.currentPrice - item.targetPrice)}
-                                                        </span>
-                                                    )}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Merchant</p>
-                                                <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                                                    {item.merchant}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Price History Chart */}
-                                        {item.priceHistory.length > 1 && (
-                                            <div className="mb-4">
-                                                <div className="flex items-center mb-2">
-                                                    <ChartBarIcon className="w-4 h-4 mr-2 text-brand-primary" />
-                                                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                                        Price History
-                                                    </p>
-                                                </div>
-                                                <ResponsiveContainer width="100%" height={120}>
-                                                    <LineChart data={item.priceHistory}>
-                                                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                                                        <XAxis 
-                                                            dataKey="date" 
-                                                            tick={{ fill: '#9CA3AF', fontSize: 11 }}
-                                                            tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                                        />
-                                                        <YAxis 
-                                                            tick={{ fill: '#9CA3AF', fontSize: 11 }}
-                                                            tickFormatter={(value) => `$${value}`}
-                                                        />
-                                                        <Tooltip 
-                                                            contentStyle={{ 
-                                                                backgroundColor: '#1F2937', 
-                                                                border: 'none', 
-                                                                borderRadius: '8px',
-                                                                color: '#fff'
-                                                            }}
-                                                            formatter={(value: number) => [formatCurrency(value), 'Price']}
-                                                            labelFormatter={(label) => formatDate(label)}
-                                                        />
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="price" 
-                                                            stroke="#3B82F6" 
-                                                            strokeWidth={2}
-                                                            dot={{ fill: '#3B82F6', r: 3 }}
-                                                            activeDot={{ r: 5 }}
-                                                        />
-                                                    </LineChart>
-                                                </ResponsiveContainer>
-                                            </div>
-                                        )}
-
-                                        {/* Action Buttons */}
-                                        <div className="flex flex-wrap gap-2">
+                                        {/* Actions */}
+                                        <div className="flex flex-wrap gap-2 mt-3">
                                             <button
-                                                onClick={() => handleTogglePriceAlert(item.id)}
-                                                className={`flex items-center px-4 py-2 rounded-lg transition-all duration-300 ${
+                                                onClick={() => handleTrackPrice(item)}
+                                                disabled={trackingItemId === item.id}
+                                                className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-teal-600 hover:bg-teal-700 disabled:opacity-60 text-white rounded-lg transition-colors"
+                                            >
+                                                <ChartBarIcon className="w-3.5 h-3.5" />
+                                                {trackingItemId === item.id ? 'Fetching…' : 'Track Price'}
+                                            </button>
+                                            <button
+                                                onClick={() => setExpandedItemId(expanded ? null : item.id)}
+                                                className="flex items-center gap-1.5 text-xs px-3 py-1.5 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-teal-400 rounded-lg transition-colors"
+                                            >
+                                                {expanded ? 'Hide Chart' : 'Price History'}
+                                            </button>
+                                            <button
+                                                onClick={() => handleToggleAlert(item.id)}
+                                                className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
                                                     item.priceAlert
-                                                        ? 'bg-purple-500 text-white shadow-lg'
-                                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                                        ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-700'
+                                                        : 'border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-indigo-400'
                                                 }`}
                                             >
-                                                <BellIcon className="w-4 h-4 mr-2" />
-                                                {item.priceAlert ? 'Alert ON' : 'Enable Alert'}
+                                                <BellIcon className="w-3.5 h-3.5" />
+                                                {item.priceAlert ? 'Alert On' : 'Set Alert'}
                                             </button>
                                             <button
-                                                onClick={() => setSelectedItem(item)}
-                                                className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg"
+                                                onClick={() => handlePurchased(item.id)}
+                                                className="flex items-center gap-1.5 text-xs px-3 py-1.5 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-teal-400 rounded-lg transition-colors"
                                             >
-                                                <ChartBarIcon className="w-4 h-4 mr-2" />
-                                                View Details
+                                                <CheckIcon className="w-3.5 h-3.5" />
+                                                Purchased
                                             </button>
                                             <button
-                                                onClick={() => handleMarkAsPurchased(item.id)}
-                                                className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300 shadow-md hover:shadow-lg"
+                                                onClick={() => handleDelete(item.id)}
+                                                className="flex items-center gap-1.5 text-xs px-3 py-1.5 border border-red-100 dark:border-red-900/30 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
                                             >
-                                                <CheckIcon className="w-4 h-4 mr-2" />
-                                                Mark Purchased
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteItem(item.id)}
-                                                className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 shadow-md hover:shadow-lg"
-                                            >
-                                                <TrashIcon className="w-4 h-4 mr-2" />
+                                                <TrashIcon className="w-3.5 h-3.5" />
                                                 Remove
                                             </button>
                                         </div>
                                     </div>
+
+                                    {/* Price History Chart */}
+                                    {expanded && chartData.length > 0 && (
+                                        <div className="border-t border-gray-100 dark:border-gray-700 px-4 py-4 animate-fade-in">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">Price trend · {item.merchant}</p>
+                                            <ResponsiveContainer width="100%" height={140}>
+                                                <LineChart data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                                                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                                                    <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#9ca3af' }} tickLine={false} axisLine={false} interval={3} />
+                                                    <YAxis tick={{ fontSize: 9, fill: '#9ca3af' }} tickLine={false} axisLine={false} tickFormatter={(v: number) => `₹${(v / 1000).toFixed(0)}k`} width={36} />
+                                                    <Tooltip
+                                                        formatter={(value: number) => [formatINR(value), 'Price']}
+                                                        contentStyle={{ fontSize: 11, border: '1px solid #e5e7eb', borderRadius: 8 }}
+                                                    />
+                                                    <Line type="monotone" dataKey="price" stroke="#0D9488" strokeWidth={2} dot={false} activeDot={{ r: 3 }} />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>

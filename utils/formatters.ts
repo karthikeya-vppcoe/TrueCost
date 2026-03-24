@@ -13,6 +13,19 @@ export const formatCurrency = (amount: number): string => {
 };
 
 /**
+ * Formats a number as an Indian Rupee string (e.g., ₹1,23,456).
+ * @param amount The number to format.
+ * @returns A string representing the amount in INR currency format.
+ */
+export const formatINR = (amount: number): string => {
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0,
+    }).format(amount);
+};
+
+/**
  * Formats a date string into a more readable format (e.g., May 20, 2024).
  * @param dateString The date string to format (e.g., '2024-05-20').
  * @returns A formatted, readable date string.
